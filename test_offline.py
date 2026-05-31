@@ -31,6 +31,7 @@ def process_file(
     input_path: str,
     output_path: str,
     sample_rate: int = 48000,
+    ear: str = "left",
 ) -> None:
     """Process a stereo WAV file through spatial encoding.
 
@@ -43,6 +44,7 @@ def process_file(
         input_path: Path to input stereo WAV file.
         output_path: Path for output mono WAV file.
         sample_rate: Sample rate in Hz (default 48000).
+        ear: Functional ear — "left" or "right" (default "left").
 
     Raises:
         FileNotFoundError: If input file does not exist.
@@ -63,7 +65,7 @@ def process_file(
     right_channel: np.ndarray = data[:, 1].astype(np.float32)
 
     # Initialize HRTF engine (synthetic mode)
-    hrtf_db = HRTFDatabase(sofa_path="", ear="left")
+    hrtf_db = HRTFDatabase(sofa_path="", ear=ear)
     encoder = MonauralSpatialEncoder(hrtf_db, sample_rate=sample_rate)
 
     # Encode each source with opposite azimuths
@@ -120,6 +122,13 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         dest="sample_rate",
         help="Sample rate in Hz (default: 48000)",
     )
+    parser.add_argument(
+        "--ear",
+        type=str,
+        default="left",
+        choices=["left", "right"],
+        help="Functional ear — left or right (default: left)",
+    )
     return parser.parse_args(argv)
 
 
@@ -135,6 +144,7 @@ def main(argv: list[str] | None = None) -> None:
             input_path=args.input_path,
             output_path=args.output_path,
             sample_rate=args.sample_rate,
+            ear=args.ear,
         )
     except FileNotFoundError as e:
         print(f"Error: {e}", file=sys.stderr)
