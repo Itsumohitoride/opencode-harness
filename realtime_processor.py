@@ -34,6 +34,11 @@ try:
 except ImportError:
     from hrtf_engine import HRTFDatabase, MonauralSpatialEncoder
 
+try:
+    from src.optimized_convolver import OverlapSaveConvolver
+except ImportError:
+    from optimized_convolver import OverlapSaveConvolver
+
 
 class RealtimeProcessor:
     """Real-time stereo-to-mono spatial audio processor.
@@ -86,6 +91,16 @@ class RealtimeProcessor:
         self._encoder: MonauralSpatialEncoder = MonauralSpatialEncoder(
             self._hrtf_db,
             sample_rate=sample_rate,
+        )
+
+        # ── precompute OverlapSaveConvolvers for each channel ────────────
+        hrtf_left: np.ndarray = self._hrtf_db.get_filter(-30.0, 0.0)
+        hrtf_right: np.ndarray = self._hrtf_db.get_filter(30.0, 0.0)
+        self._convolver_left: OverlapSaveConvolver = OverlapSaveConvolver(
+            hrtf_left, block_size=block_size,
+        )
+        self._convolver_right: OverlapSaveConvolver = OverlapSaveConvolver(
+            hrtf_right, block_size=block_size,
         )
 
         # ── stream state ──────────────────────────────────────────────────
@@ -183,14 +198,14 @@ class RealtimeProcessor:
         """Process one audio block from the sounddevice stream.
 
         Pipeline:
-          1. Report stream *status* issues to stderr (non-fatal).
-          2. Split stereo input into left and right channels.
-          3. Encode each channel with :meth:`MonauralSpatialEncoder.encode_source`
-             (L at -30°, R at +30°, elevation 0°).
-          4. Sum both encoded signals and apply anti-clip normalisation
-             (peak limited to 0.95).
-          5. Write the mono result to *outdata*.
-          6. Measure callback interval; warn on stderr if > 11 ms.
+           1. Report stream *status* issues to stderr (non-fatal).
+           2. Split stereo input into left and right channels.
+           3. Convolve each channel with its precomputed
+              :class:`OverlapSaveConvolver` (L at -30° IR, R at +30° IR).
+           4. Sum both encoded signals and apply anti-clip normalisation
+              (peak limited to 0.95).
+           5. Write the mono result to *outdata*.
+           6. Measure callback interval; warn on stderr if > 11 ms.
 
         Args:
             indata: Input buffer, shape ``(frames, 2)`` (stereo float32).
@@ -206,19 +221,9 @@ class RealtimeProcessor:
         left_ch: np.ndarray = indata[:, 0].astype(np.float32, copy=False)
         right_ch: np.ndarray = indata[:, 1].astype(np.float32, copy=False)
 
-        # Encode each channel at opposing azimuths
-        left_encoded: np.ndarray = self._encoder.encode_source(
-            left_ch,
-            azimuth=-30.0,
-            elevation=0.0,
-            distance=1.0,
-        )
-        right_encoded: np.ndarray = self._encoder.encode_source(
-            right_ch,
-            azimuth=30.0,
-            elevation=0.0,
-            distance=1.0,
-        )
+        # Convolve each channel with precomputed HRTF via overlap-save FFT
+        left_encoded: np.ndarray = self._convolver_left.process(left_ch)
+        right_encoded: np.ndarray = self._convolver_right.process(right_ch)
 
         # Sum and anti-clip normalisation (peak limited to 0.95)
         mixed: np.ndarray = left_encoded + right_encoded
