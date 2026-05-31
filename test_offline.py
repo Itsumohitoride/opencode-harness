@@ -21,7 +21,10 @@ from pathlib import Path
 import numpy as np
 import soundfile as sf
 
-from src.hrtf_engine import HRTFDatabase, MonauralSpatialEncoder
+try:
+    from src.hrtf_engine import HRTFDatabase, MonauralSpatialEncoder
+except ImportError:
+    from hrtf_engine import HRTFDatabase, MonauralSpatialEncoder
 
 
 def process_file(
