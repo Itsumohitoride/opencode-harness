@@ -1,0 +1,28 @@
+{
+  "project": "my-project",
+  "description": "Template de Harness Engineering para stacks Python/React/AWS. Personaliza este nombre y descripción para tu proyecto.",
+  "rules": {
+    "one_feature_at_a_time": true,
+    "require_tests_to_close": true,
+    "valid_status": ["pending", "in_progress", "testing", "done", "blocked"]
+  },
+  "features": [
+    {
+      "id": 1,
+      "name": "setup_project",
+      "title": "Configuración inicial del proyecto",
+      "description": "Bootstrap del proyecto: personalizar docs, scripts/ y estructura base para el stack concreto.",
+      "stack": "python",
+      "acceptance": [
+        "docs/architecture.md describe la arquitectura real del proyecto (no texto genérico)",
+        "docs/conventions.md define las convenciones del stack elegido (formateo, nombres, tests)",
+        "scripts/verify_env.py tiene verificaciones funcionales del stack (compilador, linter)",
+        "python3 scripts/check_harness.py termina con exit code 0",
+        "El directorio src/ contiene al menos un archivo de entrada del proyecto"
+      ],
+      "status": "pending",
+      "created_at": "2026-05-22T00:00:00Z",
+      "transitions": []
+    }
+  ]
+}
