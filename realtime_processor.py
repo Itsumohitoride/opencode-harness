@@ -41,8 +41,9 @@ class RealtimeProcessor:
 
     Captures stereo input via sounddevice, separates left and right channels,
     applies head shadow filtering (ipsilateral passthrough, contralateral
-    lowpass at ~4kHz), sums to mono with anti-clip normalisation, and
-    writes the result to a mono output stream.
+    lowpass at ~4kHz), applies optional front/back cue (notch + delay),
+    sums to mono with anti-clip normalisation, and writes the result to a
+    mono output stream.
 
     Args:
         input_device: Input device index (``None`` = system default).
@@ -51,10 +52,12 @@ class RealtimeProcessor:
         block_size: Processing block size in samples. Must be a positive
             multiple of 64. Default 512.
         ear: Functional ear — ``"left"`` or ``"right"``. Default ``"left"``.
+        fb_intensity: Front/back cue intensity 0.0-1.0. 0 = off. Default 0.3.
 
     Raises:
         ValueError: If *sample_rate* ≤ 0, *block_size* is not a positive
-            multiple of 64, or *ear* is not ``"left"`` / ``"right"``.
+            multiple of 64, *ear* is not ``"left"`` / ``"right"``, or
+            *fb_intensity* is outside [0.0, 1.0].
     """
 
     def __init__(
@@ -64,6 +67,7 @@ class RealtimeProcessor:
         sample_rate: int = 48000,
         block_size: int = 512,
         ear: str = "left",
+        fb_intensity: float = 0.3,
     ) -> None:
         # ── parameter validation ──────────────────────────────────────────
         if sample_rate <= 0:
@@ -74,6 +78,10 @@ class RealtimeProcessor:
             )
         if ear not in ("left", "right"):
             raise ValueError(f"ear must be 'left' or 'right', got {ear!r}")
+        if not 0.0 <= fb_intensity <= 1.0:
+            raise ValueError(
+                f"fb_intensity must be between 0.0 and 1.0, got {fb_intensity}"
+            )
 
         # ── configuration ─────────────────────────────────────────────────
         self._input_device: int | None = input_device
@@ -81,6 +89,17 @@ class RealtimeProcessor:
         self._sample_rate: int = sample_rate
         self._block_size: int = block_size
         self._ear: str = ear
+
+        # ── front/back cue params ────────────────────────────────────────
+        self._fb_intensity: float = fb_intensity
+
+        # Precompute notch filter SOS for rear sounds (~8kHz pinna notch)
+        self._rear_notch_sos: np.ndarray = butter(
+            2, [7500, 8500], btype="bandstop", fs=sample_rate, output="sos",
+        )
+
+        # Precompute delay line for rear reflection (~12ms)
+        self._rear_delay_samples: int = int(0.012 * sample_rate)
 
         # ── HRTF engine (synthetic mode — no .sofa file required) ──────────
         self._hrtf_db: HRTFDatabase = HRTFDatabase("dummy.sofa", ear=ear)
@@ -102,6 +121,7 @@ class RealtimeProcessor:
         # Initialised to None; first call uses zero state and stores zf.
         self._zi_left: np.ndarray | None = None
         self._zi_right: np.ndarray | None = None
+        self._zi_rear_notch: np.ndarray | None = None
 
         # ── stream state ──────────────────────────────────────────────────
         self._stream: sd.Stream | None = None
@@ -204,10 +224,12 @@ class RealtimeProcessor:
               contralateral channel lowpass at ~4kHz.
               Filter state (``zi``) is persisted between blocks to
               avoid transient interference at block boundaries.
-           4. Sum both channels and apply anti-clip normalisation
-              (peak limited to 0.95).
-           5. Write the mono result to *outdata*.
-           6. Measure callback interval; warn on stderr if > 11 ms.
+           4. Sum both channels.
+           5. Apply front/back cue: notch at ~8kHz + delay + attenuation
+              for rear-sound simulation (if ``_fb_intensity > 0``).
+           6. Anti-clip normalisation (peak limited to 0.95).
+           7. Write the mono result to *outdata*.
+           8. Measure callback interval; warn on stderr if > 11 ms.
 
         Args:
             indata: Input buffer, shape ``(frames, 2)`` (stereo float32).
@@ -245,8 +267,28 @@ class RealtimeProcessor:
             )
             right_encoded = right_encoded.astype(np.float32)
 
-        # Sum and anti-clip normalisation (peak limited to 0.95)
+        # Sum both channels
         mixed: np.ndarray = left_encoded + right_encoded
+
+        # Front/back cue (sutil, aplicado al mix completo)
+        if self._fb_intensity > 0:
+            # Notch ~8kHz (pinna shadow para sonidos detras)
+            rear_notch, self._zi_rear_notch = sosfilt(
+                self._rear_notch_sos, mixed,
+                zi=self._zi_rear_notch
+                if self._zi_rear_notch is not None
+                else np.zeros((self._rear_notch_sos.shape[0], 2)),
+            )
+            # Delay + atenuacion para simulacion de reflexion trasera
+            rear_reverb = np.zeros_like(mixed)
+            if self._rear_delay_samples < len(mixed):
+                rear_reverb[self._rear_delay_samples:] = (
+                    mixed[:-self._rear_delay_samples] * 0.25 * self._fb_intensity
+                )
+            # Mezclar: senal original + version "trasera" atenuada
+            mixed = mixed + (rear_notch * 0.3 + rear_reverb) * self._fb_intensity
+
+        # Anti-clip normalisation (peak limited to 0.95) — after all processing
         peak: float = float(np.max(np.abs(mixed)))
         if peak > 0.95 and peak > 0.0:
             mixed = mixed * (0.95 / peak)
@@ -316,6 +358,12 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         help="Functional ear (default: left)",
     )
     parser.add_argument(
+        "--fb-intensity",
+        type=float,
+        default=0.3,
+        help="Front/back cue intensity 0.0-1.0 (default: 0.3, 0=off)",
+    )
+    parser.add_argument(
         "--list-devices",
         action="store_true",
         help="List available audio devices and exit",
@@ -342,6 +390,7 @@ def main() -> None:
         sample_rate=args.sample_rate,
         block_size=args.block_size,
         ear=args.ear,
+        fb_intensity=args.fb_intensity,
     )
 
     try:
