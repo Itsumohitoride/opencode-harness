@@ -1143,3 +1143,126 @@ class TestPresenceBoost:
         assert hasattr(p, "is_running")
         assert hasattr(p, "latency_ms")
         assert hasattr(p, "list_devices")
+
+
+# =========================================================================
+# High-shelf boost (brillo) — >2kHz shelf for ipsolateral channel
+# =========================================================================
+
+
+class TestHighShelfBoost:
+    """Tests for high-shelf boost (brillo) processing."""
+
+    def test_brillo_default(self) -> None:
+        """Default brillo is 0.0 (off)."""
+        p = RealtimeProcessor()
+        assert p._brillo == 0.0
+
+    def test_brillo_custom(self) -> None:
+        """Custom brillo value is accepted."""
+        p = RealtimeProcessor(brillo=0.5)
+        assert p._brillo == 0.5
+
+    def test_brillo_zero(self) -> None:
+        """Brillo 0 is accepted."""
+        p = RealtimeProcessor(brillo=0.0)
+        assert p._brillo == 0.0
+
+    def test_brillo_raises_if_negative(self) -> None:
+        """Negative brillo raises ValueError."""
+        with pytest.raises(ValueError, match="brillo"):
+            RealtimeProcessor(brillo=-0.1)
+
+    def test_brillo_raises_if_over_one(self) -> None:
+        """Brillo > 1 raises ValueError."""
+        with pytest.raises(ValueError, match="brillo"):
+            RealtimeProcessor(brillo=1.5)
+
+    def test_high_shelf_sos_exists(self) -> None:
+        """High-shelf SOS filter is precomputed."""
+        p = RealtimeProcessor(brillo=0.5)
+        assert hasattr(p, "_high_shelf_sos")
+        assert isinstance(p._high_shelf_sos, np.ndarray)
+
+    def test_high_shelf_is_highpass(self) -> None:
+        """High-shelf filter boosts high frequencies more than low."""
+        from scipy.signal import sosfreqz
+
+        p = RealtimeProcessor(brillo=0.5)
+        w, h = sosfreqz(p._high_shelf_sos, fs=48000, worN=48000)
+        low_gain = float(np.mean(np.abs(h[w < 500])))
+        high_gain = float(np.mean(np.abs(h[w > 5000])))
+        assert high_gain > low_gain, (
+            "High-shelf should boost high frequencies more than low"
+        )
+
+    def test_zi_high_shelf_none_initially(self) -> None:
+        """Zi high-shelf is None before any processing."""
+        p = RealtimeProcessor(brillo=0.5)
+        assert p._zi_high_shelf is None
+
+    def test_zi_high_shelf_not_none_after_block(self) -> None:
+        """Zi high-shelf is not None after processing with brillo > 0."""
+        p = RealtimeProcessor(brillo=0.5)
+        indata = np.random.randn(512, 2).astype(np.float32) * 0.1
+        outdata = np.zeros((512, 1), dtype=np.float32)
+        p._process_block(indata, outdata, 512, None, None)
+        assert p._zi_high_shelf is not None
+
+    def test_brillo_zero_output_unchanged(self) -> None:
+        """With brillo=0 (and no other cues), output matches sum of channels."""
+        p_zero = RealtimeProcessor(
+            brillo=0.0, lr_intensity=0.0, fb_intensity=0.0, elevation=0.0, clarity=0.0,
+        )
+        rng = np.random.RandomState(42)
+        indata = rng.randn(512, 2).astype(np.float32) * 0.1
+        out_zero = np.zeros((512, 1), dtype=np.float32)
+        p_zero._process_block(indata.copy(), out_zero, 512, None, None)
+        expected = (indata[:, 0] + indata[:, 1]).astype(np.float32)
+        np.testing.assert_allclose(out_zero[:, 0], expected, atol=1e-6)
+
+    def test_brillo_positive_modifies_output(self) -> None:
+        """Brillo > 0 modifies the output compared to brillo=0."""
+        p_zero = RealtimeProcessor(
+            brillo=0.0, lr_intensity=0.0, fb_intensity=0.0, elevation=0.0, clarity=0.0,
+        )
+        p_high = RealtimeProcessor(
+            brillo=0.8, lr_intensity=0.0, fb_intensity=0.0, elevation=0.0, clarity=0.0,
+        )
+        rng = np.random.RandomState(42)
+        indata = rng.randn(512, 2).astype(np.float32) * 0.1
+        out_zero = np.zeros((512, 1), dtype=np.float32)
+        out_high = np.zeros((512, 1), dtype=np.float32)
+        p_zero._process_block(indata.copy(), out_zero, 512, None, None)
+        p_high._process_block(indata.copy(), out_high, 512, None, None)
+        assert not np.allclose(out_zero, out_high, atol=1e-6)
+
+    def test_brillo_does_not_introduce_nan(self) -> None:
+        """Brillo processing does not produce NaN values."""
+        p = RealtimeProcessor(brillo=0.8)
+        indata = np.random.randn(512, 2).astype(np.float32) * 0.1
+        outdata = np.zeros((512, 1), dtype=np.float32)
+        p._process_block(indata, outdata, 512, None, None)
+        assert not np.any(np.isnan(outdata))
+        assert not np.any(np.isinf(outdata))
+
+    def test_brillo_works_with_both_ears(self) -> None:
+        """High-shelf boost works with both ear=left and ear=right."""
+        for ear in ["left", "right"]:
+            p = RealtimeProcessor(
+                brillo=0.5, ear=ear, lr_intensity=0.0, fb_intensity=0.0,
+                elevation=0.0, clarity=0.0,
+            )
+            indata = np.random.randn(512, 2).astype(np.float32) * 0.1
+            outdata = np.zeros((512, 1), dtype=np.float32)
+            p._process_block(indata, outdata, 512, None, None)
+            assert not np.any(np.isnan(outdata))
+
+    def test_maintains_public_api(self) -> None:
+        """Existing public API is unchanged."""
+        p = RealtimeProcessor(brillo=0.5)
+        assert hasattr(p, "start")
+        assert hasattr(p, "stop")
+        assert hasattr(p, "is_running")
+        assert hasattr(p, "latency_ms")
+        assert hasattr(p, "list_devices")

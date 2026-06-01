@@ -44,6 +44,21 @@
         "implementer",
         "reviewer"
       ]
+    },
+    {
+      "date": "2026-06-01T04:33:18.439588Z",
+      "feature_id": 14,
+      "feature_name": "high_shelf_boost",
+      "model": "big-pickle",
+      "tokens_in": 10000,
+      "tokens_out": 10000,
+      "cost_usd": 0.0,
+      "duration": "10min",
+      "agents": [
+        "leader",
+        "implementer",
+        "reviewer"
+      ]
     }
   ]
 }
