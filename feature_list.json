@@ -382,9 +382,20 @@
         "Block-size 512 sin buffer underrun",
         "Todos los tests existentes pasan"
       ],
-      "status": "pending",
+      "status": "done",
       "created_at": "2026-06-01T02:53:48Z",
-      "transitions": []
+      "transitions": [
+        {
+          "from": "pending",
+          "to": "in_progress",
+          "at": "2026-06-01T03:54:50Z"
+        },
+        {
+          "from": "testing",
+          "to": "done",
+          "at": "2026-06-01T04:33:07Z"
+        }
+      ]
     },
     {
       "id": 15,
