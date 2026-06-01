@@ -114,4 +114,5 @@ python -m pytest tests/ -v
 
 ## Licencia
 
-MIT
+**Propietaria.** Todos los derechos reservados.
+Ver [LICENSE](LICENSE) para términos completos.
