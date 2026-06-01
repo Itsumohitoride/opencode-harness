@@ -1,4 +1,4 @@
-# MonoSpatial
+# Rafear
 
 Audio 3D monoaural para gaming con sordera unilateral.
 
@@ -60,7 +60,7 @@ python src/realtime_processor.py --input-device 25 --output-device 24 --ear righ
 
 1. Instalar [VB-CABLE](https://vb-audio.com/Cable/)
 2. Configurar juego/app → CABLE Input
-3. Ejecutar MonoSpatial → \--input-device CABLE_Output\ → \--output-device auricular
+3. Ejecutar Rafear → \--input-device CABLE_Output\ → \--output-device auricular
 ## Flags de realtime_processor.py
 
 | Flag | Rango | Default | Descripción |
