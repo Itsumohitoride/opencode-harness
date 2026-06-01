@@ -29,6 +29,21 @@
         "implementer",
         "reviewer"
       ]
+    },
+    {
+      "date": "2026-06-01T03:49:16.508022Z",
+      "feature_id": 13,
+      "feature_name": "presence_boost",
+      "model": "big-pickle",
+      "tokens_in": 10000,
+      "tokens_out": 10000,
+      "cost_usd": 0.0,
+      "duration": "10min",
+      "agents": [
+        "leader",
+        "implementer",
+        "reviewer"
+      ]
     }
   ]
 }

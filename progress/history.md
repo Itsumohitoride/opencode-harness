@@ -14,3 +14,8 @@
 **Estado:** done | **Modelo:** big-pickle | **Costo:** .00 | **Duración:** 10min
 **Descripción:** Control de intensidad por eje espacial. --lr-intensity (0.0-1.0, default 1.0) para head shadow L/R. Unificado con --fb-intensity y --ud-intensity existentes.
 **Tests:** 81 tests realtime, 0 failing. 11 tests nuevos (TestLrIntensity).
+
+## Feature 13 â€” presence_boost
+**Estado:** done | **Modelo:** big-pickle | **Costo:** \.00 | **DuraciÃ³n:** 10min
+**DescripciÃ³n:** Presence boost (bandpass 3-5kHz) para claridad de voces/detalles. Flag --clarity (0.0-1.0, default 0.0=off). Aplica SOS al canal ipsolateral, escalado por clarity * 0.3.
+**Tests:** 95 tests realtime, 0 failing. 15 tests nuevos (TestPresenceBoost).
