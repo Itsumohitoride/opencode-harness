@@ -57,12 +57,15 @@ class RealtimeProcessor:
             Default 0.3.
         lr_intensity: Left/right head shadow intensity 0.0-1.0.
             0 = no head shadow. Default 1.0 (full head shadow).
+        clarity: Presence boost 3-5kHz clarity 0.0-1.0.
+            0 = off. Default 0.0.
 
     Raises:
         ValueError: If *sample_rate* ≤ 0, *block_size* is not a positive
             multiple of 64, *ear* is not ``"left"`` / ``"right"``,
             *fb_intensity* is outside [0.0, 1.0], *elevation* is outside
-            [0.0, 1.0], or *lr_intensity* is outside [0.0, 1.0].
+            [0.0, 1.0], *lr_intensity* is outside [0.0, 1.0], or *clarity*
+            is outside [0.0, 1.0].
     """
 
     def __init__(
@@ -75,6 +78,7 @@ class RealtimeProcessor:
         fb_intensity: float = 0.3,
         elevation: float = 0.3,
         lr_intensity: float = 1.0,
+        clarity: float = 0.0,
     ) -> None:
         # ── parameter validation ──────────────────────────────────────────
         if sample_rate <= 0:
@@ -88,6 +92,10 @@ class RealtimeProcessor:
         if not 0.0 <= fb_intensity <= 1.0:
             raise ValueError(
                 f"fb_intensity must be between 0.0 and 1.0, got {fb_intensity}"
+            )
+        if not 0.0 <= clarity <= 1.0:
+            raise ValueError(
+                f"clarity must be between 0.0 and 1.0, got {clarity}"
             )
 
         # ── configuration ─────────────────────────────────────────────────
@@ -103,6 +111,14 @@ class RealtimeProcessor:
                 f"elevation must be between 0.0 and 1.0, got {elevation}"
             )
         self._elevation: float = elevation
+
+        # ── clarity (presence boost) params ────────────────────────────────
+        self._clarity: float = clarity  # 0.0-1.0, default 0.0
+
+        # Presence boost SOS (bandpass 3-5kHz)
+        self._presence_sos: np.ndarray = butter(
+            2, [3000, 5000], btype="bandpass", fs=sample_rate, output="sos",
+        )
 
         # ── lr_intensity (left/right head shadow) params ──────────────────
         if not 0.0 <= lr_intensity <= 1.0:
@@ -155,6 +171,7 @@ class RealtimeProcessor:
         self._zi_rear_notch: np.ndarray | None = None
         self._zi_elevation_up: np.ndarray | None = None
         self._zi_elevation_down: np.ndarray | None = None
+        self._zi_presence: np.ndarray | None = None
 
         # ── stream state ──────────────────────────────────────────────────
         self._stream: sd.Stream | None = None
@@ -307,6 +324,24 @@ class RealtimeProcessor:
             # Blend original + filtered según lr_intensity
             right_encoded = right_ch.astype(np.float32) * (1.0 - self._lr_intensity) + right_filtered * self._lr_intensity
 
+        # Presence boost para canal ipsolateral (claridad de voz/detalles)
+        if self._clarity > 0:
+            if self._ear == "right":
+                # right ear functional -> right channel is ipsolateral
+                presence, self._zi_presence = sosfilt(
+                    self._presence_sos, right_ch,
+                    zi=self._zi_presence if self._zi_presence is not None
+                    else np.zeros((self._presence_sos.shape[0], 2)),
+                )
+                right_encoded = right_encoded.astype(np.float32) + presence.astype(np.float32) * self._clarity * 0.3
+            else:  # ear=left
+                presence, self._zi_presence = sosfilt(
+                    self._presence_sos, left_ch,
+                    zi=self._zi_presence if self._zi_presence is not None
+                    else np.zeros((self._presence_sos.shape[0], 2)),
+                )
+                left_encoded = left_encoded.astype(np.float32) + presence.astype(np.float32) * self._clarity * 0.3
+
         # Sum both channels
         mixed: np.ndarray = left_encoded + right_encoded
 
@@ -437,6 +472,12 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         help="Left/right head shadow intensity 0.0-1.0 (default: 1.0, 0=off)",
     )
     parser.add_argument(
+        "--clarity",
+        type=float,
+        default=0.0,
+        help="Presence boost 3-5kHz clarity 0.0-1.0 (default: 0.0, 0=off)",
+    )
+    parser.add_argument(
         "--list-devices",
         action="store_true",
         help="List available audio devices and exit",
@@ -466,6 +507,7 @@ def main() -> None:
         fb_intensity=args.fb_intensity,
         elevation=args.ud_intensity,
         lr_intensity=args.lr_intensity,
+        clarity=args.clarity,
     )
 
     try:
