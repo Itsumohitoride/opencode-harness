@@ -74,6 +74,21 @@
         "implementer",
         "reviewer"
       ]
+    },
+    {
+      "date": "2026-06-01T05:09:58.624134Z",
+      "feature_id": 16,
+      "feature_name": "soft_compressor",
+      "model": "big-pickle",
+      "tokens_in": 10000,
+      "tokens_out": 10000,
+      "cost_usd": 0.0,
+      "duration": "10min",
+      "agents": [
+        "leader",
+        "implementer",
+        "reviewer"
+      ]
     }
   ]
 }
