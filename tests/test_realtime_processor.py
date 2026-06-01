@@ -3,6 +3,8 @@
 Uses extensive mocking of sounddevice — no real audio devices required.
 """
 
+# ruff: noqa: ANN201 — test functions don't need return type annotations
+
 from __future__ import annotations
 
 from unittest.mock import MagicMock, patch
@@ -893,6 +895,129 @@ class TestElevationCue:
     def test_maintains_public_api(self) -> None:
         """Existing public API is unchanged."""
         p = RealtimeProcessor(elevation=0.5)
+        assert hasattr(p, "start")
+        assert hasattr(p, "stop")
+        assert hasattr(p, "is_running")
+        assert hasattr(p, "latency_ms")
+        assert hasattr(p, "list_devices")
+
+
+# =========================================================================
+# LR intensity (left/right head shadow) control
+# =========================================================================
+
+
+class TestLrIntensity:
+    """Tests for left/right head shadow intensity control."""
+
+    def test_lr_intensity_default(self) -> None:
+        """Default LR intensity is 1.0 (full head shadow)."""
+        p = RealtimeProcessor()
+        assert p._lr_intensity == 1.0
+
+    def test_lr_intensity_custom(self) -> None:
+        """Custom LR intensity is accepted."""
+        p = RealtimeProcessor(lr_intensity=0.5)
+        assert p._lr_intensity == 0.5
+
+    def test_lr_intensity_zero(self) -> None:
+        """LR intensity 0 is accepted (no head shadow)."""
+        p = RealtimeProcessor(lr_intensity=0.0)
+        assert p._lr_intensity == 0.0
+
+    def test_lr_intensity_raises_if_negative(self) -> None:
+        """Negative LR intensity raises ValueError."""
+        with pytest.raises(ValueError, match="lr_intensity"):
+            RealtimeProcessor(lr_intensity=-0.1)
+
+    def test_lr_intensity_raises_if_over_one(self) -> None:
+        """LR intensity > 1 raises ValueError."""
+        with pytest.raises(ValueError, match="lr_intensity"):
+            RealtimeProcessor(lr_intensity=1.5)
+
+    def test_lr_zero_both_channels_passthrough(self) -> None:
+        """With lr_intensity=0, both channels pass through unchanged."""
+        p = RealtimeProcessor(
+            lr_intensity=0.0, fb_intensity=0.0, elevation=0.0,
+        )
+        rng = np.random.RandomState(42)
+        indata = rng.randn(512, 2).astype(np.float32) * 0.1
+        outdata = np.zeros((512, 1), dtype=np.float32)
+        p._process_block(indata, outdata, 512, None, None)
+        # Output should be sum of L+R (no filtering)
+        expected = (indata[:, 0] + indata[:, 1]).astype(np.float32)
+        np.testing.assert_allclose(outdata[:, 0], expected, atol=1e-6)
+
+    def test_lr_one_applies_full_head_shadow(self) -> None:
+        """With lr_intensity=1.0, head shadow is fully applied (differs from 0)."""
+        p_full = RealtimeProcessor(
+            lr_intensity=1.0, fb_intensity=0.0, elevation=0.0,
+        )
+        rng = np.random.RandomState(42)
+        indata = rng.randn(512, 2).astype(np.float32) * 0.1
+        out_full = np.zeros((512, 1), dtype=np.float32)
+        p_full._process_block(indata.copy(), out_full, 512, None, None)
+
+        p_zero = RealtimeProcessor(
+            lr_intensity=0.0, fb_intensity=0.0, elevation=0.0,
+        )
+        out_zero = np.zeros((512, 1), dtype=np.float32)
+        p_zero._process_block(indata.copy(), out_zero, 512, None, None)
+
+        # Full head shadow should differ from no head shadow
+        assert not np.allclose(out_full, out_zero, atol=1e-6)
+
+    def test_lr_half_is_between_zero_and_one(self) -> None:
+        """LR intensity 0.5 produces output between 0.0 and 1.0."""
+        rng = np.random.RandomState(42)
+        indata = rng.randn(512, 2).astype(np.float32) * 0.1
+
+        p_zero = RealtimeProcessor(
+            lr_intensity=0.0, fb_intensity=0.0, elevation=0.0,
+        )
+        out_zero = np.zeros((512, 1), dtype=np.float32)
+        p_zero._process_block(indata.copy(), out_zero, 512, None, None)
+
+        p_half = RealtimeProcessor(
+            lr_intensity=0.5, fb_intensity=0.0, elevation=0.0,
+        )
+        out_half = np.zeros((512, 1), dtype=np.float32)
+        p_half._process_block(indata.copy(), out_half, 512, None, None)
+
+        p_full = RealtimeProcessor(
+            lr_intensity=1.0, fb_intensity=0.0, elevation=0.0,
+        )
+        out_full = np.zeros((512, 1), dtype=np.float32)
+        p_full._process_block(indata.copy(), out_full, 512, None, None)
+
+        # Half should be between zero and full (in terms of difference)
+        diff_zero_half = float(np.max(np.abs(out_half - out_zero)))
+        diff_zero_full = float(np.max(np.abs(out_full - out_zero)))
+        assert diff_zero_half < diff_zero_full
+
+    def test_lr_intensity_does_not_introduce_nan(self) -> None:
+        """LR intensity processing does not produce NaN."""
+        p = RealtimeProcessor(lr_intensity=0.5)
+        indata = np.random.randn(512, 2).astype(np.float32) * 0.1
+        outdata = np.zeros((512, 1), dtype=np.float32)
+        p._process_block(indata, outdata, 512, None, None)
+        assert not np.any(np.isnan(outdata))
+        assert not np.any(np.isinf(outdata))
+
+    def test_lr_works_with_both_ears(self) -> None:
+        """LR intensity works with both ear=left and ear=right."""
+        for ear in ["left", "right"]:
+            p = RealtimeProcessor(
+                lr_intensity=0.5, ear=ear, fb_intensity=0.0, elevation=0.0,
+            )
+            indata = np.random.randn(512, 2).astype(np.float32) * 0.1
+            outdata = np.zeros((512, 1), dtype=np.float32)
+            p._process_block(indata, outdata, 512, None, None)
+            assert not np.any(np.isnan(outdata))
+
+    def test_maintains_public_api(self) -> None:
+        """Existing public API is unchanged."""
+        p = RealtimeProcessor(lr_intensity=0.5)
         assert hasattr(p, "start")
         assert hasattr(p, "stop")
         assert hasattr(p, "is_running")

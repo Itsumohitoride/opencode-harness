@@ -14,6 +14,21 @@
         "implementer",
         "reviewer"
       ]
+    },
+    {
+      "date": "2026-06-01T02:09:03.996311+00:00",
+      "feature_id": 12,
+      "feature_name": "hrtf_axis_control",
+      "model": "big-pickle",
+      "tokens_in": 10000,
+      "tokens_out": 10000,
+      "cost_usd": 0.0,
+      "duration": "10min",
+      "agents": [
+        "leader",
+        "implementer",
+        "reviewer"
+      ]
     }
   ]
 }

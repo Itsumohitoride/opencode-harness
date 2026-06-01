@@ -55,12 +55,14 @@ class RealtimeProcessor:
         fb_intensity: Front/back cue intensity 0.0-1.0. 0 = off. Default 0.3.
         elevation: Up/down elevation cue intensity 0.0-1.0. 0 = off.
             Default 0.3.
+        lr_intensity: Left/right head shadow intensity 0.0-1.0.
+            0 = no head shadow. Default 1.0 (full head shadow).
 
     Raises:
         ValueError: If *sample_rate* ≤ 0, *block_size* is not a positive
             multiple of 64, *ear* is not ``"left"`` / ``"right"``,
-            *fb_intensity* is outside [0.0, 1.0], or *elevation* is outside
-            [0.0, 1.0].
+            *fb_intensity* is outside [0.0, 1.0], *elevation* is outside
+            [0.0, 1.0], or *lr_intensity* is outside [0.0, 1.0].
     """
 
     def __init__(
@@ -72,6 +74,7 @@ class RealtimeProcessor:
         ear: str = "left",
         fb_intensity: float = 0.3,
         elevation: float = 0.3,
+        lr_intensity: float = 1.0,
     ) -> None:
         # ── parameter validation ──────────────────────────────────────────
         if sample_rate <= 0:
@@ -100,6 +103,13 @@ class RealtimeProcessor:
                 f"elevation must be between 0.0 and 1.0, got {elevation}"
             )
         self._elevation: float = elevation
+
+        # ── lr_intensity (left/right head shadow) params ──────────────────
+        if not 0.0 <= lr_intensity <= 1.0:
+            raise ValueError(
+                f"lr_intensity must be between 0.0 and 1.0, got {lr_intensity}"
+            )
+        self._lr_intensity: float = lr_intensity
 
         # Precompute bandpass SOS for elevation up (7.5-10.5kHz boost)
         self._elevation_up_sos: np.ndarray = butter(
@@ -268,27 +278,34 @@ class RealtimeProcessor:
         left_ch: np.ndarray = indata[:, 0].astype(np.float32, copy=False)
         right_ch: np.ndarray = indata[:, 1].astype(np.float32, copy=False)
 
-        # Head shadow model:
+        # Head shadow model with intensity control:
         # Canal ipsolateral (oido funcional): passthrough (transparente)
         # Canal contralateral: lowpass ~4kHz (cabeza bloquea agudos)
+        # El resultado filtrado se mezcla con el original según _lr_intensity
         if self._ear == "right":
-            left_encoded, self._zi_left = sosfilt(
+            # Left channel is contralateral (right ear functional)
+            left_filtered, self._zi_left = sosfilt(
                 self._head_shadow_sos, left_ch,
                 zi=self._zi_left
                 if self._zi_left is not None
                 else np.zeros((1, 2)),
             )
-            left_encoded = left_encoded.astype(np.float32)
+            left_filtered = left_filtered.astype(np.float32)
+            # Blend original + filtered según lr_intensity
+            left_encoded = left_ch.astype(np.float32) * (1.0 - self._lr_intensity) + left_filtered * self._lr_intensity
             right_encoded = right_ch.astype(np.float32)
         else:  # ear=left (default)
             left_encoded = left_ch.astype(np.float32)
-            right_encoded, self._zi_right = sosfilt(
+            # Right channel is contralateral (left ear functional)
+            right_filtered, self._zi_right = sosfilt(
                 self._head_shadow_sos, right_ch,
                 zi=self._zi_right
                 if self._zi_right is not None
                 else np.zeros((1, 2)),
             )
-            right_encoded = right_encoded.astype(np.float32)
+            right_filtered = right_filtered.astype(np.float32)
+            # Blend original + filtered según lr_intensity
+            right_encoded = right_ch.astype(np.float32) * (1.0 - self._lr_intensity) + right_filtered * self._lr_intensity
 
         # Sum both channels
         mixed: np.ndarray = left_encoded + right_encoded
@@ -414,6 +431,12 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         help="Up/down elevation cue intensity 0.0-1.0 (default: 0.3, 0=off)",
     )
     parser.add_argument(
+        "--lr-intensity",
+        type=float,
+        default=1.0,
+        help="Left/right head shadow intensity 0.0-1.0 (default: 1.0, 0=off)",
+    )
+    parser.add_argument(
         "--list-devices",
         action="store_true",
         help="List available audio devices and exit",
@@ -442,6 +465,7 @@ def main() -> None:
         ear=args.ear,
         fb_intensity=args.fb_intensity,
         elevation=args.ud_intensity,
+        lr_intensity=args.lr_intensity,
     )
 
     try:
