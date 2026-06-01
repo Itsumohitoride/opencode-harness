@@ -1,0 +1,11 @@
+# Harness files (never pushed to remote)
+.agents/
+.venv/
+AGENTS.md
+CHECKPOINTS.md
+docs/
+progress/
+scripts/
+feature_list.json
+__pycache__/
+*.pyc
