@@ -63,13 +63,16 @@ class RealtimeProcessor:
             0 = off. Default 0.0.
         low_cut: Low-cut filter 80Hz anti-rumble 0.0-1.0.
             0 = off. Default 0.0.
+        compress: Soft compressor crest factor reduction 0.0-1.0.
+            0 = off. Default 0.0.
 
     Raises:
         ValueError: If *sample_rate* ≤ 0, *block_size* is not a positive
             multiple of 64, *ear* is not ``"left"`` / ``"right"``,
             *fb_intensity* is outside [0.0, 1.0], *elevation* is outside
             [0.0, 1.0], *lr_intensity* is outside             [0.0, 1.0], *clarity* is outside [0.0, 1.0], *brillo*
-            is outside [0.0, 1.0], or *low_cut* is outside [0.0, 1.0].
+            is outside [0.0, 1.0], *low_cut* is outside [0.0, 1.0], or
+            *compress* is outside [0.0, 1.0].
     """
 
     def __init__(
@@ -85,6 +88,7 @@ class RealtimeProcessor:
         clarity: float = 0.0,
         brillo: float = 0.0,
         low_cut: float = 0.0,
+        compress: float = 0.0,
     ) -> None:
         # ── parameter validation ──────────────────────────────────────────
         if sample_rate <= 0:
@@ -110,6 +114,10 @@ class RealtimeProcessor:
         if not 0.0 <= low_cut <= 1.0:
             raise ValueError(
                 f"low_cut must be between 0.0 and 1.0, got {low_cut}"
+            )
+        if not 0.0 <= compress <= 1.0:
+            raise ValueError(
+                f"compress must be between 0.0 and 1.0, got {compress}"
             )
 
         # ── configuration ─────────────────────────────────────────────────
@@ -191,6 +199,30 @@ class RealtimeProcessor:
         self._head_shadow_sos: np.ndarray = butter(
             2, 4000, btype="low", fs=sample_rate, output="sos",
         )
+
+        # ── soft compressor params ──────────────────────────────────────────
+        self._compress: float = compress  # 0.0-1.0, default 0.0
+
+        # Compressor parameters (fixed)
+        self._comp_threshold: float = 0.25  # -12dB in linear
+        self._comp_ratio: float = 3.0  # 3:1
+        self._comp_knee: float = 2.0  # 6dB knee width in linear (~2x threshold)
+        self._comp_attack: float = 1.0  # attack in ms (1ms)
+        self._comp_release: float = 50.0  # release in ms (50ms)
+
+        # Precompute attack/release coefficients (exponential smoothing)
+        # alpha = 1 - exp(-2.3 / (time_ms * sample_rate / 1000))
+        # For per-block envelope, we smooth from block RMS to block RMS.
+        self._comp_attack_coeff: float = float(
+            np.exp(-2.3 / max(1.0, self._comp_attack * sample_rate / 1000.0))
+        )
+        self._comp_release_coeff: float = float(
+            np.exp(-2.3 / max(1.0, self._comp_release * sample_rate / 1000.0))
+        )
+
+        # Compressor state (persists between blocks)
+        self._comp_env: float = 0.0  # envelope follower state (linear)
+        self._comp_gain_reduction: float = 1.0  # last gain reduction value
 
         # ── filter state (sosfilt zi persistence between blocks) ─────────
         # Avoids transient at block boundaries that causes low/high freq
@@ -286,6 +318,75 @@ class RealtimeProcessor:
         return self._block_size / self._sample_rate * 1000.0
 
     # ------------------------------------------------------------------
+    # Soft compressor
+    # ------------------------------------------------------------------
+
+    def _apply_compressor(self, samples: np.ndarray) -> np.ndarray:
+        """Apply soft-knee compressor to mono signal block.
+
+        Uses block-level RMS detection with inter-block envelope
+        smoothing (attack/release). Soft-knee gain computer blends
+        compression smoothly around the threshold. Dry/wet blend
+        controlled by ``_compress`` intensity.
+
+        Args:
+            samples: Mono audio block, shape ``(N,)``.
+
+        Returns:
+            Processed block with gain reduction applied, same shape.
+        """
+        if self._compress <= 0.0:
+            return samples
+
+        # RMS of current block (with tiny epsilon to avoid log(0))
+        rms: float = float(np.sqrt(np.mean(samples ** 2) + 1e-10))
+
+        # Envelope follower (attack/release smoothing between blocks)
+        if rms > self._comp_env:
+            # Attack phase
+            self._comp_env += self._comp_attack_coeff * (rms - self._comp_env)
+        else:
+            # Release phase
+            self._comp_env += self._comp_release_coeff * (rms - self._comp_env)
+
+        env: float = self._comp_env
+
+        # Soft-knee gain computer
+        # Knee region: [threshold / knee, threshold * knee]
+        knee_start: float = self._comp_threshold / self._comp_knee
+        knee_end: float = self._comp_threshold * self._comp_knee
+
+        if env <= knee_start:
+            # Below knee: no compression
+            gain: float = 1.0
+        elif env >= knee_end:
+            # Above knee: full compression (standard ratio)
+            gain = float((env / self._comp_threshold) ** (1.0 / self._comp_ratio - 1.0))
+            gain = max(gain, 0.01)  # max 40dB reduction
+        else:
+            # In knee: smooth quadratic interpolation in dB domain
+            x: float = (env - knee_start) / (knee_end - knee_start)
+            gain_db: float = (
+                x * x
+                * (1.0 / self._comp_ratio - 1.0)
+                * 20.0 * np.log10(env / self._comp_threshold + 1e-10)
+            )
+            gain = float(10.0 ** (gain_db / 20.0))
+            gain = max(gain, 0.01)
+
+        self._comp_gain_reduction = gain
+
+        # Apply gain to entire block
+        compressed: np.ndarray = samples * gain
+
+        # Dry/wet blend: compress=0 → all dry, compress=1 → max wet
+        # Use 50% max wet to keep sound natural
+        blend: float = self._compress * 0.5
+        out: np.ndarray = samples * (1.0 - blend) + compressed * blend
+
+        return out
+
+    # ------------------------------------------------------------------
     # Internal callback
     # ------------------------------------------------------------------
 
@@ -313,9 +414,10 @@ class RealtimeProcessor:
               for rear-sound simulation (if ``_fb_intensity > 0``).
            8. Apply elevation cues (if ``_elevation > 0``).
            9. Apply low-cut anti-rumble filter (if ``_low_cut > 0``).
-           10. Anti-clip normalisation (peak limited to 0.95).
-           11. Write the mono result to *outdata*.
-           12. Measure callback interval; warn on stderr if > 11 ms.
+           10. Apply soft compressor (if ``_compress > 0``).
+           11. Anti-clip normalisation (peak limited to 0.95).
+           12. Write the mono result to *outdata*.
+           13. Measure callback interval; warn on stderr if > 11 ms.
 
         Args:
             indata: Input buffer, shape ``(frames, 2)`` (stereo float32).
@@ -447,6 +549,10 @@ class RealtimeProcessor:
             # Blend dry/wet based on low_cut intensity
             mixed = mixed.astype(np.float32) * (1 - self._low_cut * 0.5) + filtered.astype(np.float32) * (self._low_cut * 0.5)
 
+        # --- Soft compressor (crest factor reduction) ---
+        if self._compress > 0:
+            mixed = self._apply_compressor(mixed)
+
         # Anti-clip normalisation (peak limited to 0.95) — after all processing
         peak: float = float(np.max(np.abs(mixed)))
         if peak > 0.95 and peak > 0.0:
@@ -553,6 +659,12 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         help="Low-cut 80Hz anti-rumble 0.0-1.0 (default: 0.0, 0=off)",
     )
     parser.add_argument(
+        "--compress",
+        type=float,
+        default=0.0,
+        help="Soft compressor crest factor reduction 0.0-1.0 (default: 0.0, 0=off)",
+    )
+    parser.add_argument(
         "--list-devices",
         action="store_true",
         help="List available audio devices and exit",
@@ -585,6 +697,7 @@ def main() -> None:
         clarity=args.clarity,
         brillo=args.brillo,
         low_cut=args.low_cut,
+        compress=args.compress,
     )
 
     try:

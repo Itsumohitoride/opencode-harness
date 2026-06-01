@@ -29,3 +29,8 @@
 **Estado:** done | **Modelo:** big-pickle | **Costo:** \.00 | **Duración:** 10min
 **Descripción:** Highpass 80Hz anti-rumble post-sum. Flag --low-cut (0.0-1.0, default 0.0=off). Butter 4th order, blend dry/wet progresivo.
 **Tests:** 123 tests realtime, 0 failing. 14 tests nuevos (TestLowCutFilter).
+
+## Feature 16 — soft_compressor
+**Estado:** done | **Modelo:** big-pickle | **Costo:** \.00 | **Duración:** 10min
+**Descripción:** Soft-knee compressor post-sum. Flag --compress (0.0-1.0, default 0.0=off). Threshold -12dB, ratio 3:1, knee 6dB, attack 1ms, release 50ms. Dry/wet blend progresivo.
+**Tests:** 138 tests realtime, 0 failing. 15 tests nuevos (TestSoftCompressor).

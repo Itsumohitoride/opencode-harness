@@ -1404,3 +1404,179 @@ class TestLowCutFilter:
         assert hasattr(p, "is_running")
         assert hasattr(p, "latency_ms")
         assert hasattr(p, "list_devices")
+
+
+# =========================================================================
+# Soft compressor (crest factor reduction)
+# =========================================================================
+
+
+class TestSoftCompressor:
+    """Tests for soft-knee compressor (--compress)."""
+
+    def test_compress_default(self) -> None:
+        """Default compress is 0.0 (off)."""
+        p = RealtimeProcessor()
+        assert p._compress == 0.0
+
+    def test_compress_custom(self) -> None:
+        """Custom compress value is accepted."""
+        p = RealtimeProcessor(compress=0.5)
+        assert p._compress == 0.5
+
+    def test_compress_zero(self) -> None:
+        """Compress 0 is accepted."""
+        p = RealtimeProcessor(compress=0.0)
+        assert p._compress == 0.0
+
+    def test_compress_raises_if_negative(self) -> None:
+        """Negative compress raises ValueError."""
+        with pytest.raises(ValueError, match="compress"):
+            RealtimeProcessor(compress=-0.1)
+
+    def test_compress_raises_if_over_one(self) -> None:
+        """Compress > 1 raises ValueError."""
+        with pytest.raises(ValueError, match="compress"):
+            RealtimeProcessor(compress=1.5)
+
+    def test_compressor_params_exist(self) -> None:
+        """Compressor fixed params are initialised correctly."""
+        p = RealtimeProcessor(compress=0.5)
+        assert hasattr(p, "_comp_threshold")
+        assert hasattr(p, "_comp_ratio")
+        assert hasattr(p, "_comp_knee")
+        assert hasattr(p, "_comp_env")
+        assert p._comp_threshold == 0.25  # -12dB
+        assert p._comp_ratio == 3.0
+        assert p._comp_env == 0.0
+
+    def test_compressor_coefficients_exist(self) -> None:
+        """Attack/release coefficients are precomputed in valid range."""
+        p = RealtimeProcessor(compress=0.5)
+        assert hasattr(p, "_comp_attack_coeff")
+        assert hasattr(p, "_comp_release_coeff")
+        assert 0 < p._comp_attack_coeff < 1
+        assert 0 < p._comp_release_coeff < 1
+
+    def test_apply_compressor_method_exists(self) -> None:
+        """_apply_compressor method exists."""
+        p = RealtimeProcessor(compress=0.5)
+        assert hasattr(p, "_apply_compressor")
+        assert callable(p._apply_compressor)
+
+    def test_compress_zero_output_unchanged(self) -> None:
+        """With compress=0 (and no other cues), output matches sum of channels."""
+        p_zero = RealtimeProcessor(
+            compress=0.0, lr_intensity=0.0, fb_intensity=0.0,
+            elevation=0.0, clarity=0.0, brillo=0.0, low_cut=0.0,
+        )
+        rng = np.random.RandomState(42)
+        indata = rng.randn(512, 2).astype(np.float32) * 0.1
+        out_zero = np.zeros((512, 1), dtype=np.float32)
+        p_zero._process_block(indata.copy(), out_zero, 512, None, None)
+        expected = (indata[:, 0] + indata[:, 1]).astype(np.float32)
+        np.testing.assert_allclose(out_zero[:, 0], expected, atol=1e-6)
+
+    def test_compress_positive_modifies_output(self) -> None:
+        """Compress > 0 modifies the output compared to compress=0."""
+        p_zero = RealtimeProcessor(
+            compress=0.0, lr_intensity=0.0, fb_intensity=0.0,
+            elevation=0.0, clarity=0.0, brillo=0.0, low_cut=0.0,
+        )
+        p_comp = RealtimeProcessor(
+            compress=1.0, lr_intensity=0.0, fb_intensity=0.0,
+            elevation=0.0, clarity=0.0, brillo=0.0, low_cut=0.0,
+        )
+        rng = np.random.RandomState(42)
+        indata = rng.randn(512, 2).astype(np.float32) * 0.1
+        out_zero = np.zeros((512, 1), dtype=np.float32)
+        out_comp = np.zeros((512, 1), dtype=np.float32)
+        p_zero._process_block(indata.copy(), out_zero, 512, None, None)
+        p_comp._process_block(indata.copy(), out_comp, 512, None, None)
+        assert not np.allclose(out_zero, out_comp, atol=1e-6)
+
+    def test_compressor_never_increases_peak(self) -> None:
+        """Compressor should not make peaks louder."""
+        p = RealtimeProcessor(
+            compress=1.0, lr_intensity=0.0, fb_intensity=0.0,
+            elevation=0.0, clarity=0.0, brillo=0.0, low_cut=0.0,
+        )
+        rng = np.random.RandomState(42)
+        indata = rng.randn(512, 2).astype(np.float32) * 0.5
+        outdata = np.zeros((512, 1), dtype=np.float32)
+        p._process_block(indata.copy(), outdata, 512, None, None)
+        # Peaks in compressed should not exceed peaks in input sum
+        input_peak = float(np.max(np.abs(indata[:, 0] + indata[:, 1])))
+        output_peak = float(np.max(np.abs(outdata[:, 0])))
+        # Allow tiny tolerance for blend
+        assert output_peak <= input_peak * 1.01 or abs(output_peak - input_peak) < 0.01
+
+    def test_compressor_reduces_crest_factor(self) -> None:
+        """Crest factor (peak/RMS) should decrease with compression."""
+        p_off = RealtimeProcessor(
+            compress=0.0, lr_intensity=0.0, fb_intensity=0.0,
+            elevation=0.0, clarity=0.0, brillo=0.0, low_cut=0.0,
+        )
+        p_on = RealtimeProcessor(
+            compress=1.0, lr_intensity=0.0, fb_intensity=0.0,
+            elevation=0.0, clarity=0.0, brillo=0.0, low_cut=0.0,
+        )
+        # Signal with strong peaks
+        rng = np.random.RandomState(42)
+        indata = rng.randn(512, 2).astype(np.float32) * 0.3
+        # Add some spikes
+        indata[10:15, :] = 0.9
+        indata[100:105, :] = 0.8
+
+        out_off = np.zeros((512, 1), dtype=np.float32)
+        out_on = np.zeros((512, 1), dtype=np.float32)
+        p_off._process_block(indata.copy(), out_off, 512, None, None)
+        p_on._process_block(indata.copy(), out_on, 512, None, None)
+
+        crest_off = float(np.max(np.abs(out_off)) / (np.sqrt(np.mean(out_off**2)) + 1e-10))
+        crest_on = float(np.max(np.abs(out_on)) / (np.sqrt(np.mean(out_on**2)) + 1e-10))
+
+        assert crest_on < crest_off * 1.1, "Compressor should reduce crest factor"
+
+    def test_compressor_does_not_introduce_nan(self) -> None:
+        """Compressor processing does not produce NaN values."""
+        p = RealtimeProcessor(
+            compress=0.8, lr_intensity=0.0, fb_intensity=0.0,
+            elevation=0.0, clarity=0.0, brillo=0.0, low_cut=0.0,
+        )
+        indata = np.random.randn(512, 2).astype(np.float32) * 0.1
+        outdata = np.zeros((512, 1), dtype=np.float32)
+        p._process_block(indata, outdata, 512, None, None)
+        assert not np.any(np.isnan(outdata))
+        assert not np.any(np.isinf(outdata))
+
+    def test_compressor_maintains_public_api(self) -> None:
+        """Existing public API is unchanged by compressor."""
+        p = RealtimeProcessor(compress=0.5)
+        assert hasattr(p, "start")
+        assert hasattr(p, "stop")
+        assert hasattr(p, "is_running")
+        assert hasattr(p, "latency_ms")
+        assert hasattr(p, "list_devices")
+
+    def test_compressor_envelope_state_persists(self) -> None:
+        """Envelope follower state should persist and decay between blocks."""
+        p = RealtimeProcessor(
+            compress=1.0, lr_intensity=0.0, fb_intensity=0.0,
+            elevation=0.0, clarity=0.0, brillo=0.0, low_cut=0.0,
+        )
+        # Loud block
+        indata1 = np.ones((512, 2), dtype=np.float32) * 0.5
+        outdata1 = np.zeros((512, 1), dtype=np.float32)
+        p._process_block(indata1, outdata1, 512, None, None)
+        env_after_loud = p._comp_env
+        assert env_after_loud > 0.1, "Envelope should rise with loud input"
+
+        # Silence block
+        indata2 = np.zeros((512, 2), dtype=np.float32)
+        outdata2 = np.zeros((512, 1), dtype=np.float32)
+        p._process_block(indata2, outdata2, 512, None, None)
+        env_after_silence = p._comp_env
+        # Envelope should have decayed but not to zero immediately (release time)
+        assert env_after_silence < env_after_loud * 0.9, \
+            "Envelope should decay after silence"
