@@ -1,0 +1,256 @@
+{
+  "project": "MonoSpatial",
+  "description": "Audio 3D monoaural para gaming y accesibilidad. Permite a personas con audición de un solo lado percibir dirección espacial en videojuegos mediante filtros HRTF.",
+  "rules": {
+    "one_feature_at_a_time": true,
+    "require_tests_to_close": true,
+    "valid_status": [
+      "pending",
+      "in_progress",
+      "testing",
+      "done",
+      "blocked"
+    ]
+  },
+  "features": [
+    {
+      "id": 1,
+      "name": "setup_project",
+      "title": "Configuración inicial del proyecto",
+      "description": "Bootstrap del proyecto MonoSpatial: personalizar docs, scripts/verify_env.py y estructura base para el stack Python DSP.",
+      "stack": "python",
+      "acceptance": [
+        "docs/architecture.md describe la arquitectura de audio 3D monoaural (no texto genérico)",
+        "docs/conventions.md define convenciones para Python DSP (naming de señales, latencia, performance)",
+        "scripts/verify_env.py verifica numpy, scipy, sounddevice, soundfile, PyQt6",
+        "python scripts/check_harness.py termina sin errores",
+        "src/ contiene los planos de arquitectura y código como documentación"
+      ],
+      "status": "done",
+      "created_at": "2026-05-31T00:00:00Z",
+      "transitions": [
+        {
+          "from": "pending",
+          "to": "done",
+          "at": "2026-05-31T00:00:00Z"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "hrtf_engine",
+      "title": "HRTF Engine — carga de bases de datos .sofa y codificación espacial monoaural",
+      "description": "Implementar HRTFDatabase (carga de archivos .sofa vía libmysofa, interpolación azimuth/elevation, caché de filtros) y MonauralSpatialEncoder (convolución HRTF, spectral elevation cues, front-back cues, distance gain, mezcla de fuentes).",
+      "stack": "python",
+      "acceptance": [
+        "HRTFDatabase carga un archivo .sofa y extrae filtros por azimuth/elevation",
+        "HRTFDatabase cachea filtros para evitar recarga en mismos ángulos",
+        "MonauralSpatialEncoder.encode_source aplica convolución + elevation cues + front-back cues + distance gain",
+        "MonauralSpatialEncoder.mix_sources mezcla múltiples fuentes con normalización antirrecorte",
+        "Todos los parámetros de entrada tienen validación de rango (azimuth ±180, elevation ±90, distance > 0)",
+        "Type hints en todas las funciones públicas",
+        "Tests unitarios para cada método"
+      ],
+      "status": "pending",
+      "created_at": "2026-05-31T00:00:00Z",
+      "transitions": []
+    },
+    {
+      "id": 3,
+      "name": "optimized_convolver",
+      "title": "Convolución optimizada — Overlap-Save FFT",
+      "description": "Implementar OverlapSaveConvolver con FFT precomputada para latencia mínima. Soporta IR de longitud arbitraria y procesamiento por bloques.",
+      "stack": "python",
+      "acceptance": [
+        "OverlapSaveConvolver procesa bloques de audio con overlap-save (FFT)",
+        "FFT del IR se precomputa una vez en __init__",
+        "El estado overlap se mantiene entre llamadas a process()",
+        "Soporta IR de cualquier longitud (no solo potencia de 2)",
+        "El output tiene la misma longitud que el input block",
+        "Rendimiento: block_size=512 procesa en < 11ms",
+        "Tests unitarios con IR sintética vs fftconvolve de scipy como referencia"
+      ],
+      "status": "pending",
+      "created_at": "2026-05-31T00:00:00Z",
+      "transitions": []
+    },
+    {
+      "id": 4,
+      "name": "offline_test",
+      "title": "Test offline — validación con archivos WAV",
+      "description": "Implementar script test_offline.py que toma un archivo WAV estéreo, aplica codificación espacial monoaural y escribe el resultado como WAV mono.",
+      "stack": "python",
+      "acceptance": [
+        "test_offline.py lee un archivo WAV estéreo con soundfile",
+        "Separa canal izquierdo y derecho como fuentes espaciales separadas",
+        "Aplica MonauralSpatialEncoder a cada fuente con azimuths opuestos (±30°)",
+        "Mezcla las fuentes en una sola salida mono",
+        "Escribe el resultado como WAV mono de 16-bit",
+        "Maneja errores de archivo inexistente o formato no soportado",
+        "Se puede ejecutar como script: python src/test_offline.py <input> <output>"
+      ],
+      "status": "pending",
+      "created_at": "2026-05-31T00:00:00Z",
+      "transitions": []
+    },
+    {
+      "id": 5,
+      "name": "realtime_processor",
+      "title": "Procesamiento en tiempo real — captura y procesamiento de audio vivo",
+      "description": "Implementar realtime_processor.py que captura audio del sistema via sounddevice, procesa por bloques de 512 samples (~10.6ms) y envía salida monoaural procesada al auricular.",
+      "stack": "python",
+      "acceptance": [
+        "Lista dispositivos de audio disponibles con sd.query_devices()",
+        "Callback process_block procesa entrada estéreo en bloques de 512 frames",
+        "Latencia de procesamiento < 11ms con block_size=512 a 48kHz",
+        "Maneja status de stream (reporta errores sin crashear)",
+        "Se puede detener con Ctrl+C limpiamente",
+        "Usa HRTFDatabase y MonauralSpatialEncoder del módulo hrtf_engine",
+        "Documentación de configuración: selección de dispositivo input/output"
+      ],
+      "status": "pending",
+      "created_at": "2026-05-31T00:00:00Z",
+      "transitions": []
+    },
+    {
+      "id": 6,
+      "name": "calibration_ui",
+      "title": "App de calibración — interfaz PyQt6 para ajuste de parámetros HRTF",
+      "description": "Implementar calibration_ui.py con PyQt6: selector de oído funcional, sliders de intensidad HRTF y reverb trasero, test de discriminación front/back con feedback inmediato.",
+      "stack": "python",
+      "acceptance": [
+        "Ventana PyQt6 se abre sin errores",
+        "Slider de intensidad HRTF (0-100%) ajusta el gain del filtro HRTF",
+        "Slider de reverb trasero (0-100%) ajusta el nivel de front-back cue",
+        "Botón 'Reproducir sonido de prueba' genera ruido y lo reproduce en ángulo aleatorio (0° o 180°)",
+        "Botones 'Adelante'/'Atrás' permiten al usuario responder la dirección percibida",
+        "Label muestra feedback inmediato (correcto/incorrecto)",
+        "Se lanza como script: python src/calibration_ui.py"
+      ],
+      "status": "pending",
+      "created_at": "2026-05-31T00:00:00Z",
+      "transitions": []
+    },
+    {
+      "id": 8,
+      "name": "realtime_perf_optimization",
+      "title": "Optimizar realtime_processor.py con OverlapSaveConvolver para eliminar buffer underruns",
+      "description": "Reemplazar fftconvolve (scipy) en realtime_processor._process_block por OverlapSaveConvolver (precomputado). Reduce tiempo de procesamiento por bloque, elimina interferencia por buffer underrun a block_size=512.",
+      "stack": "python",
+      "acceptance": [
+        "OverlapSaveConvolver creado en __init__ con IR precomputado para cada canal",
+        "_process_block usa .process() en vez de encode_source() con fftconvolve",
+        "Block-size 512 funciona sin interferencia audible",
+        "Todos los tests existentes pasan",
+        "No rompe la API pública de RealtimeProcessor"
+      ],
+      "status": "done",
+      "created_at": "2026-05-31T00:00:00Z",
+      "transitions": [
+        {
+          "from": "pending",
+          "to": "in_progress",
+          "at": "2026-05-31T00:00:00Z"
+        },
+        {
+          "from": "in_progress",
+          "to": "done",
+          "at": "2026-05-31T00:00:00Z"
+        }
+      ]
+    },
+    {
+      "id": 9,
+      "name": "natural_spatial_audio",
+      "title": "Audio espacial natural con head shadow + paneo (sin coloracion HRTF)",
+      "description": "Reemplazar el HRTF sintetico (filtro pasa-banda que suena a caja) por un modelo de head shadow: canal izquierdo passthrough, canal derecho filtro lowpass a ~4kHz (simula bloqueo de la cabeza), paneo para centrar. Audio transparente sin coloracion.",
+      "stack": "python",
+      "acceptance": [
+        "Canal izquierdo suena natural, sin filtrado",
+        "Canal derecho tiene lowpass suave (~4kHz, head shadow)",
+        "Mezcla mono con anti-clip normalisation",
+        "No suena a caja/banera",
+        "Block-size 512 funciona sin buffer underrun",
+        "Todos los tests existentes pasan"
+      ],
+      "status": "in_progress",
+      "created_at": "2026-05-31T00:00:00Z",
+      "transitions": [
+        {
+          "from": "pending",
+          "to": "in_progress",
+          "at": "2026-05-31T00:00:00Z"
+        }
+      ]
+    },
+    {
+      "id": 10,
+      "name": "front_back_cues",
+      "title": "Discriminacion frontal/trasera — notches espectrales + delay para sonidos detras",
+      "description": "Agregar senales front/back al pipeline de head shadow. Para sonidos detras (azimuth > 90 o < -90): notch filter ~8kHz (pinna shadow) + delay ~12ms + atenuacion (-12dB). Para sonidos adelante: leave limpio o boost sutil. Independiente del eje L/R.",
+      "stack": "python",
+      "acceptance": [
+        "Sonidos frontales suenan sin coloracion artificial",
+        "Sonidos traseros tienen notch ~8kHz + delay perceptible",
+        "Funciona combinado con head shadow (L/R)",
+        "Block-size 512 sin buffer underrun",
+        "Todos los tests existentes pasan"
+      ],
+      "status": "pending",
+      "created_at": "2026-05-31T00:00:00Z",
+      "transitions": []
+    },
+    {
+      "id": 11,
+      "name": "elevation_cues",
+      "title": "Discriminacion de elevacion (arriba/abajo) — filtros espectrales segun elevacion",
+      "description": "Agregar senales de elevacion al pipeline. Para sonidos arriba (>20 deg): boost 7.5-10.5kHz (simula reflexion del pabellon). Para sonidos abajo (<-20 deg): cut 3.5-6.5kHz. Basado en el codigo existente de MonauralSpatialEncoder.apply_spectral_elevation_cue pero integrado en el nuevo pipeline de head shadow.",
+      "stack": "python",
+      "acceptance": [
+        "Sonidos sobre la cabeza tienen boost en 7.5-10.5kHz",
+        "Sonidos bajo la cabeza tienen cut en 3.5-6.5kHz",
+        "Funciona en combinacion con head shadow + front/back",
+        "Block-size 512 sin buffer underrun",
+        "Todos los tests existentes pasan"
+      ],
+      "status": "done",
+      "created_at": "2026-05-31T00:00:00Z",
+      "transitions": [
+        {
+          "from": "pending",
+          "to": "in_progress",
+          "at": "2026-06-01T01:38:52Z"
+        },
+        {
+          "from": "in_progress",
+          "to": "testing",
+          "at": "2026-06-01T01:46:26Z"
+        },
+        {
+          "from": "testing",
+          "to": "done",
+          "at": "2026-06-01T01:51:37Z"
+        }
+      ]
+    },
+    {
+      "id": 12,
+      "name": "hrtf_axis_control",
+      "title": "Control de intensidad por eje espacial (HRTF intensity sliders)",
+      "description": "Agregar parametros independientes para controlar la intensidad de cada eje espacial: --lr-intensity (0-100%), --fb-intensity (0-100%), --ud-intensity (0-100%). Permite al usuario calibrar que tan fuerte es cada senal espacial segun su percepcion. Los valores default deben sonar naturales.",
+      "stack": "python",
+      "acceptance": [
+        "--lr-intensity controla que tan fuerte es el head shadow (0-100%)",
+        "--fb-intensity controla el notch trasero (0-100%, 0=desactivado)",
+        "--ud-intensity controla el boost/cut de elevacion (0-100%, 0=desactivado)",
+        "Default para cada eje suena natural",
+        "Funciona en realtime_processor y test_offline",
+        "Block-size 512 sin buffer underrun",
+        "Todos los tests existentes pasan"
+      ],
+      "status": "pending",
+      "created_at": "2026-05-31T00:00:00Z",
+      "transitions": []
+    }
+  ]
+}

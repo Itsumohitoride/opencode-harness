@@ -53,11 +53,14 @@ class RealtimeProcessor:
             multiple of 64. Default 512.
         ear: Functional ear — ``"left"`` or ``"right"``. Default ``"left"``.
         fb_intensity: Front/back cue intensity 0.0-1.0. 0 = off. Default 0.3.
+        elevation: Up/down elevation cue intensity 0.0-1.0. 0 = off.
+            Default 0.3.
 
     Raises:
         ValueError: If *sample_rate* ≤ 0, *block_size* is not a positive
-            multiple of 64, *ear* is not ``"left"`` / ``"right"``, or
-            *fb_intensity* is outside [0.0, 1.0].
+            multiple of 64, *ear* is not ``"left"`` / ``"right"``,
+            *fb_intensity* is outside [0.0, 1.0], or *elevation* is outside
+            [0.0, 1.0].
     """
 
     def __init__(
@@ -68,6 +71,7 @@ class RealtimeProcessor:
         block_size: int = 512,
         ear: str = "left",
         fb_intensity: float = 0.3,
+        elevation: float = 0.3,
     ) -> None:
         # ── parameter validation ──────────────────────────────────────────
         if sample_rate <= 0:
@@ -89,6 +93,23 @@ class RealtimeProcessor:
         self._sample_rate: int = sample_rate
         self._block_size: int = block_size
         self._ear: str = ear
+
+            # ── elevation (up/down) cue params ─────────────────────────────
+        if not 0.0 <= elevation <= 1.0:
+            raise ValueError(
+                f"elevation must be between 0.0 and 1.0, got {elevation}"
+            )
+        self._elevation: float = elevation
+
+        # Precompute bandpass SOS for elevation up (7.5-10.5kHz boost)
+        self._elevation_up_sos: np.ndarray = butter(
+            2, [7500, 10500], btype="bandpass", fs=sample_rate, output="sos",
+        )
+
+        # Precompute bandpass SOS for elevation down (3.5-6.5kHz cut)
+        self._elevation_down_sos: np.ndarray = butter(
+            2, [3500, 6500], btype="bandpass", fs=sample_rate, output="sos",
+        )
 
         # ── front/back cue params ────────────────────────────────────────
         self._fb_intensity: float = fb_intensity
@@ -122,6 +143,8 @@ class RealtimeProcessor:
         self._zi_left: np.ndarray | None = None
         self._zi_right: np.ndarray | None = None
         self._zi_rear_notch: np.ndarray | None = None
+        self._zi_elevation_up: np.ndarray | None = None
+        self._zi_elevation_down: np.ndarray | None = None
 
         # ── stream state ──────────────────────────────────────────────────
         self._stream: sd.Stream | None = None
@@ -288,6 +311,27 @@ class RealtimeProcessor:
             # Mezclar: senal original + version "trasera" atenuada
             mixed = mixed + (rear_notch * 0.3 + rear_reverb) * self._fb_intensity
 
+        # Elevation cue (aplicado al mix completo)
+        if self._elevation > 0:
+            # Boost arriba (>20°): mezclar senal original + bandpass filtrado * 0.4
+            up_filtered, self._zi_elevation_up = sosfilt(
+                self._elevation_up_sos, mixed,
+                zi=self._zi_elevation_up
+                if self._zi_elevation_up is not None
+                else np.zeros((self._elevation_up_sos.shape[0], 2)),
+            )
+            # Cut abajo (<-20°): restar bandpass filtrado * 0.3
+            down_filtered, self._zi_elevation_down = sosfilt(
+                self._elevation_down_sos, mixed,
+                zi=self._zi_elevation_down
+                if self._zi_elevation_down is not None
+                else np.zeros((self._elevation_down_sos.shape[0], 2)),
+            )
+            # En la práctica real se usaría un azimuth/elevation por fuente,
+            # pero aquí aplicamos ambos cues sutiles al mix completo para simular
+            # ambiente 3D genérico (similar a cómo front/back cue se aplica al mix)
+            mixed = mixed + (up_filtered * 0.4 - down_filtered * 0.3) * self._elevation
+
         # Anti-clip normalisation (peak limited to 0.95) — after all processing
         peak: float = float(np.max(np.abs(mixed)))
         if peak > 0.95 and peak > 0.0:
@@ -364,6 +408,12 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         help="Front/back cue intensity 0.0-1.0 (default: 0.3, 0=off)",
     )
     parser.add_argument(
+        "--ud-intensity",
+        type=float,
+        default=0.3,
+        help="Up/down elevation cue intensity 0.0-1.0 (default: 0.3, 0=off)",
+    )
+    parser.add_argument(
         "--list-devices",
         action="store_true",
         help="List available audio devices and exit",
@@ -391,6 +441,7 @@ def main() -> None:
         block_size=args.block_size,
         ear=args.ear,
         fb_intensity=args.fb_intensity,
+        elevation=args.ud_intensity,
     )
 
     try:

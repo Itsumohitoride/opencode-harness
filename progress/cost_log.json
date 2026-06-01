@@ -1,0 +1,19 @@
+{
+  "entries": [
+    {
+      "date": "2026-06-01T01:52:05.025962+00:00",
+      "feature_id": 11,
+      "feature_name": "elevation_cues",
+      "model": "big-pickle",
+      "tokens_in": 10000,
+      "tokens_out": 10000,
+      "cost_usd": 0.0,
+      "duration": "15min",
+      "agents": [
+        "leader",
+        "implementer",
+        "reviewer"
+      ]
+    }
+  ]
+}
