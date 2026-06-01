@@ -1,6 +1,6 @@
 # Rafear - Proprietary License
 
-Copyright (c) 2026 Miguel. All rights reserved.
+Copyright (c) 2026 Luis Miguel Ossa Arias. All rights reserved.
 
 ## Terms
 
@@ -15,7 +15,7 @@ Copyright (c) 2026 Miguel. All rights reserved.
    - Reverse engineer, decompile, or disassemble
    - Remove or alter copyright notices
 
-3. Exceptions. Owner (Miguel) may grant written permission
+3. Exceptions. Owner (Luis Miguel Ossa Arias) may grant written permission
    for specific uses case-by-case. Non-transferable, revocable.
 
 4. Enforcement. Unauthorized use = copyright infringement.
