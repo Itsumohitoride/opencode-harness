@@ -162,6 +162,33 @@
       ]
     },
     {
+      "id": 7,
+      "name": "ear_flag_test_offline",
+      "title": "Flag --ear para test_offline.py (seleccion de oido funcional)",
+      "description": "Agregar flag --ear left|right a test_offline.py para seleccionar el oido funcional. El script procesa el WAV aplicando HRTF al oido seleccionado.",
+      "stack": "python",
+      "acceptance": [
+        "test_offline.py acepta --ear left|right",
+        "Default es left (compatibilidad hacia atras)",
+        "Con --ear right, el procesamiento espacial se optimiza para oido derecho",
+        "Todos los tests existentes pasan"
+      ],
+      "status": "done",
+      "created_at": "2026-05-31T00:00:00Z",
+      "transitions": [
+        {
+          "from": "pending",
+          "to": "in_progress",
+          "at": "2026-05-31T00:00:00Z"
+        },
+        {
+          "from": "in_progress",
+          "to": "done",
+          "at": "2026-05-31T00:00:00Z"
+        }
+      ]
+    },
+    {
       "id": 8,
       "name": "realtime_perf_optimization",
       "title": "Optimizar realtime_processor.py con OverlapSaveConvolver para eliminar buffer underruns",
@@ -308,6 +335,130 @@
           "at": "2026-06-01T02:08:38Z"
         }
       ]
+    },
+    {
+      "id": 13,
+      "name": "presence_boost",
+      "title": "Presence boost ~3-5kHz para claridad de voces y detalles",
+      "description": "Bandpass 3-5kHz mezclado sutilmente al canal ipsolateral. Mejora nitidez de voces, pasos y detalles agudos en gaming. Flag --clarity (0.0-1.0, default 0.0=off).",
+      "stack": "python",
+      "acceptance": [
+        "Canal ipsolateral recibe boost sutil en 3-5kHz",
+        "Flag --clarity 0.0-1.0 (default 0.0=off)",
+        "No afecta canal contralateral ni latencia",
+        "Block-size 512 sin buffer underrun",
+        "Todos los tests existentes pasan"
+      ],
+      "status": "pending",
+      "created_at": "2026-06-01T02:53:48Z",
+      "transitions": []
+    },
+    {
+      "id": 14,
+      "name": "high_shelf_boost",
+      "title": "High-shelf >2kHz para brillo general",
+      "description": "High-shelf filter a 2kHz para dar brillo al canal ipsolateral. Complementa presence boost. Flag --brillo (0.0-1.0, default 0.0=off).",
+      "stack": "python",
+      "acceptance": [
+        "High-shelf a 2kHz aplicado al canal ipsolateral",
+        "Flag --brillo 0.0-1.0 (default 0.0=off)",
+        "No afecta canal contralateral ni latencia",
+        "Block-size 512 sin buffer underrun",
+        "Todos los tests existentes pasan"
+      ],
+      "status": "pending",
+      "created_at": "2026-06-01T02:53:48Z",
+      "transitions": []
+    },
+    {
+      "id": 15,
+      "name": "low_cut_filter",
+      "title": "Low-cut ~80Hz para eliminar rumble de bajos",
+      "description": "Highpass a 80Hz para eliminar ruido de subsuelo, motores, viento. Comun en headsets gaming para limpiar la senal. Flag --low-cut (0.0-1.0, default 0.0=off, 1.0=filtro completo).",
+      "stack": "python",
+      "acceptance": [
+        "Highpass 80Hz elimina frecuencias sub-sonoras",
+        "Flag --low-cut 0.0-1.0 (default 0.0=off)",
+        "Aplicado al mix completo (post-sum)",
+        "Block-size 512 sin buffer underrun",
+        "Todos los tests existentes pasan"
+      ],
+      "status": "pending",
+      "created_at": "2026-06-01T02:53:48Z",
+      "transitions": []
+    },
+    {
+      "id": 16,
+      "name": "soft_compressor",
+      "title": "Compresor suave para emparejar volumen entre sonidos",
+      "description": "Compresor de crest factor suave. Reduce picos fuertes y sube pasajes suaves. Mejora audibilidad en gaming sin distorsion. Flag --compress (0.0-1.0, default 0.0=off).",
+      "stack": "python",
+      "acceptance": [
+        "Compresion suave reduce crest factor sin distorsion",
+        "Flag --compress 0.0-1.0 (default 0.0=off)",
+        "Aplicado al mix completo antes de anti-clip",
+        "Block-size 512 sin buffer underrun",
+        "Todos los tests existentes pasan"
+      ],
+      "status": "pending",
+      "created_at": "2026-06-01T02:53:48Z",
+      "transitions": []
+    },
+    {
+      "id": 17,
+      "name": "wasapi_loopback",
+      "title": "Captura directa sin CABLE mediante WASAPI loopback",
+      "description": "Reemplazar CABLE Input por WASAPI loopback nativo de Windows. Captura el mix de audio del sistema directamente, sin Virtual Audio Cable. Auto-detecta el dispositivo de salida por defecto. Elimina dependencia y reduce latencia.",
+      "stack": "python",
+      "acceptance": [
+        "Captura audio del sistema via WASAPI loopback (sin CABLE)",
+        "Auto-detecta dispositivo de salida por defecto",
+        "Procesa y envia al headset",
+        "Latencia menor o igual que con CABLE",
+        "Funciona sin CABLE instalado",
+        "Todos los tests existentes pasan"
+      ],
+      "status": "pending",
+      "created_at": "2026-06-01T02:53:48Z",
+      "transitions": []
+    },
+    {
+      "id": 18,
+      "name": "app_background",
+      "title": "App Python que corre en segundo plano (bandeja de sistema)",
+      "description": "Convertir MonoSpatial en una app Python que se ejecuta en background con icono en bandeja de sistema. Sin terminal visible. Auto-detecta dispositivos CABLE + headset. Inicio automatico con Windows.",
+      "stack": "fullstack",
+      "acceptance": [
+        "App se ejecuta en background sin ventana de terminal",
+        "Icono en bandeja de sistema (system tray)",
+        "Auto-detecta CABLE Output y headset al iniciar",
+        "Inicio automatico con Windows (opcional)",
+        "Click derecho en icono: iniciar/detener/configurar/salir",
+        "Ventana de configuracion basica (flags)",
+        "Todos los tests existentes pasan"
+      ],
+      "status": "pending",
+      "created_at": "2026-06-01T02:53:48Z",
+      "transitions": []
+    },
+    {
+      "id": 19,
+      "name": "cpp_juce_migration",
+      "title": "Migracion a aplicacion nativa C++ con JUCE framework",
+      "description": "Reescribir el pipeline de procesamiento y la app en C++ usando JUCE framework. Aplicacion standalone instalable, menor latencia, sin dependencia de Python.",
+      "stack": "fullstack",
+      "acceptance": [
+        "Pipeline de procesamiento reescrito en C++ con JUCE",
+        "Latencia igual o menor que MVP Python",
+        "Instalador MSI o similar",
+        "Auto-deteccion de dispositivos",
+        "Funciona sin Python instalado",
+        "UI de configuracion basica",
+        "Resultados identicos al MVP Python (mismos filtros)"
+      ],
+      "status": "pending",
+      "created_at": "2026-06-01T02:56:32Z",
+      "transitions": []
     }
   ]
 }

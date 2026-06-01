@@ -1,14 +1,17 @@
-# Session actual
+# Sesión actual
 
-- **Feature en curso:** 12 â€” hrtf_axis_control
-- **Branch:** feature/12-hrtf_axis_control
-- **Inicio:** 2026-05-31
-- **Agente:** implementer
+- **Feature en curso:** (ninguna)
+- **Inicio:** (no iniciada)
+- **Agente:** (no asignado)
 
 ## Plan
-- Add `lr_intensity` param to RealtimeProcessor.__init__ with validation
-- Modify `_process_block` to blend head shadow by lr_intensity
-- Add `--lr-intensity` CLI arg
-- Pass `lr_intensity` to constructor in main()
-- Write tests for lr_intensity (default, custom, 0, 1, valid/invalid ranges, behavior)
-- Verify existing tests still pass (70 baseline)
+
+(todas las features completadas)
+
+## Bitácora
+
+Features 1-12 todas done y mergeadas a develop.
+
+## Próximo paso
+
+Esperando instrucciones del usuario
