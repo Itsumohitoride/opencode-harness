@@ -51,9 +51,15 @@
         "Type hints en todas las funciones públicas",
         "Tests unitarios para cada método"
       ],
-      "status": "pending",
+      "status": "done",
       "created_at": "2026-05-31T00:00:00Z",
-      "transitions": []
+      "transitions": [
+        {
+          "from": "pending",
+          "to": "done",
+          "at": "2026-06-01T01:56:10Z"
+        }
+      ]
     },
     {
       "id": 3,
@@ -70,9 +76,15 @@
         "Rendimiento: block_size=512 procesa en < 11ms",
         "Tests unitarios con IR sintética vs fftconvolve de scipy como referencia"
       ],
-      "status": "pending",
+      "status": "done",
       "created_at": "2026-05-31T00:00:00Z",
-      "transitions": []
+      "transitions": [
+        {
+          "from": "pending",
+          "to": "done",
+          "at": "2026-06-01T01:56:10Z"
+        }
+      ]
     },
     {
       "id": 4,
@@ -89,9 +101,15 @@
         "Maneja errores de archivo inexistente o formato no soportado",
         "Se puede ejecutar como script: python src/test_offline.py <input> <output>"
       ],
-      "status": "pending",
+      "status": "done",
       "created_at": "2026-05-31T00:00:00Z",
-      "transitions": []
+      "transitions": [
+        {
+          "from": "pending",
+          "to": "done",
+          "at": "2026-06-01T01:56:10Z"
+        }
+      ]
     },
     {
       "id": 5,
@@ -108,9 +126,15 @@
         "Usa HRTFDatabase y MonauralSpatialEncoder del módulo hrtf_engine",
         "Documentación de configuración: selección de dispositivo input/output"
       ],
-      "status": "pending",
+      "status": "done",
       "created_at": "2026-05-31T00:00:00Z",
-      "transitions": []
+      "transitions": [
+        {
+          "from": "pending",
+          "to": "done",
+          "at": "2026-06-01T01:56:10Z"
+        }
+      ]
     },
     {
       "id": 6,
@@ -127,9 +151,15 @@
         "Label muestra feedback inmediato (correcto/incorrecto)",
         "Se lanza como script: python src/calibration_ui.py"
       ],
-      "status": "pending",
+      "status": "done",
       "created_at": "2026-05-31T00:00:00Z",
-      "transitions": []
+      "transitions": [
+        {
+          "from": "pending",
+          "to": "done",
+          "at": "2026-06-01T01:56:10Z"
+        }
+      ]
     },
     {
       "id": 8,
@@ -173,13 +203,18 @@
         "Block-size 512 funciona sin buffer underrun",
         "Todos los tests existentes pasan"
       ],
-      "status": "in_progress",
+      "status": "done",
       "created_at": "2026-05-31T00:00:00Z",
       "transitions": [
         {
           "from": "pending",
           "to": "in_progress",
           "at": "2026-05-31T00:00:00Z"
+        },
+        {
+          "from": "in_progress",
+          "to": "done",
+          "at": "2026-06-01T01:56:10Z"
         }
       ]
     },
@@ -196,9 +231,15 @@
         "Block-size 512 sin buffer underrun",
         "Todos los tests existentes pasan"
       ],
-      "status": "pending",
+      "status": "done",
       "created_at": "2026-05-31T00:00:00Z",
-      "transitions": []
+      "transitions": [
+        {
+          "from": "pending",
+          "to": "done",
+          "at": "2026-06-01T01:56:10Z"
+        }
+      ]
     },
     {
       "id": 11,
@@ -248,9 +289,25 @@
         "Block-size 512 sin buffer underrun",
         "Todos los tests existentes pasan"
       ],
-      "status": "pending",
+      "status": "done",
       "created_at": "2026-05-31T00:00:00Z",
-      "transitions": []
+      "transitions": [
+        {
+          "from": "pending",
+          "to": "in_progress",
+          "at": "2026-06-01T01:56:16Z"
+        },
+        {
+          "from": "in_progress",
+          "to": "testing",
+          "at": "2026-06-01T02:01:49Z"
+        },
+        {
+          "from": "testing",
+          "to": "done",
+          "at": "2026-06-01T02:08:38Z"
+        }
+      ]
     }
   ]
 }
