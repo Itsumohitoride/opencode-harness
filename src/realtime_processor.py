@@ -61,13 +61,15 @@ class RealtimeProcessor:
             0 = off. Default 0.0.
         brillo: High-shelf boost >2kHz brillo 0.0-1.0.
             0 = off. Default 0.0.
+        low_cut: Low-cut filter 80Hz anti-rumble 0.0-1.0.
+            0 = off. Default 0.0.
 
     Raises:
         ValueError: If *sample_rate* ≤ 0, *block_size* is not a positive
             multiple of 64, *ear* is not ``"left"`` / ``"right"``,
             *fb_intensity* is outside [0.0, 1.0], *elevation* is outside
-            [0.0, 1.0], *lr_intensity* is outside [0.0, 1.0], *clarity* is outside [0.0, 1.0], or *brillo*
-            is outside [0.0, 1.0].
+            [0.0, 1.0], *lr_intensity* is outside             [0.0, 1.0], *clarity* is outside [0.0, 1.0], *brillo*
+            is outside [0.0, 1.0], or *low_cut* is outside [0.0, 1.0].
     """
 
     def __init__(
@@ -82,6 +84,7 @@ class RealtimeProcessor:
         lr_intensity: float = 1.0,
         clarity: float = 0.0,
         brillo: float = 0.0,
+        low_cut: float = 0.0,
     ) -> None:
         # ── parameter validation ──────────────────────────────────────────
         if sample_rate <= 0:
@@ -103,6 +106,10 @@ class RealtimeProcessor:
         if not 0.0 <= brillo <= 1.0:
             raise ValueError(
                 f"brillo must be between 0.0 and 1.0, got {brillo}"
+            )
+        if not 0.0 <= low_cut <= 1.0:
+            raise ValueError(
+                f"low_cut must be between 0.0 and 1.0, got {low_cut}"
             )
 
         # ── configuration ─────────────────────────────────────────────────
@@ -133,6 +140,14 @@ class RealtimeProcessor:
         # High-shelf boost SOS (>2kHz shelf)
         self._high_shelf_sos: np.ndarray = butter(
             2, 2000, btype="high", fs=sample_rate, output="sos",
+        )
+
+        # ── low-cut filter (80Hz highpass, anti-rumble) ─────────────────────
+        self._low_cut: float = low_cut  # 0.0-1.0, default 0.0
+
+        # Highpass 80Hz anti-rumble
+        self._low_cut_sos: np.ndarray = butter(
+            4, 80, btype="high", fs=sample_rate, output="sos",
         )
 
         # ── lr_intensity (left/right head shadow) params ──────────────────
@@ -188,6 +203,7 @@ class RealtimeProcessor:
         self._zi_elevation_down: np.ndarray | None = None
         self._zi_presence: np.ndarray | None = None
         self._zi_high_shelf: np.ndarray | None = None
+        self._zi_low_cut: np.ndarray | None = None
 
         # ── stream state ──────────────────────────────────────────────────
         self._stream: sd.Stream | None = None
@@ -290,12 +306,16 @@ class RealtimeProcessor:
               contralateral channel lowpass at ~4kHz.
               Filter state (``zi``) is persisted between blocks to
               avoid transient interference at block boundaries.
-           4. Sum both channels.
-           5. Apply front/back cue: notch at ~8kHz + delay + attenuation
+           4. Apply presence boost (clarity) to ipsilateral channel.
+           5. Apply high-shelf boost (brillo) to ipsilateral channel.
+           6. Sum both channels to mono.
+           7. Apply front/back cue: notch at ~8kHz + delay + attenuation
               for rear-sound simulation (if ``_fb_intensity > 0``).
-           6. Anti-clip normalisation (peak limited to 0.95).
-           7. Write the mono result to *outdata*.
-           8. Measure callback interval; warn on stderr if > 11 ms.
+           8. Apply elevation cues (if ``_elevation > 0``).
+           9. Apply low-cut anti-rumble filter (if ``_low_cut > 0``).
+           10. Anti-clip normalisation (peak limited to 0.95).
+           11. Write the mono result to *outdata*.
+           12. Measure callback interval; warn on stderr if > 11 ms.
 
         Args:
             indata: Input buffer, shape ``(frames, 2)`` (stereo float32).
@@ -417,6 +437,16 @@ class RealtimeProcessor:
             # ambiente 3D genérico (similar a cómo front/back cue se aplica al mix)
             mixed = mixed + (up_filtered * 0.4 - down_filtered * 0.3) * self._elevation
 
+        # --- Low-cut filter (post-sum, anti-rumble) ---
+        if self._low_cut > 0:
+            filtered, self._zi_low_cut = sosfilt(
+                self._low_cut_sos, mixed,
+                zi=self._zi_low_cut if self._zi_low_cut is not None
+                else np.zeros((self._low_cut_sos.shape[0], 2)),
+            )
+            # Blend dry/wet based on low_cut intensity
+            mixed = mixed.astype(np.float32) * (1 - self._low_cut * 0.5) + filtered.astype(np.float32) * (self._low_cut * 0.5)
+
         # Anti-clip normalisation (peak limited to 0.95) — after all processing
         peak: float = float(np.max(np.abs(mixed)))
         if peak > 0.95 and peak > 0.0:
@@ -517,6 +547,12 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         help="High-shelf boost >2kHz brillo 0.0-1.0 (default: 0.0, 0=off)",
     )
     parser.add_argument(
+        "--low-cut",
+        type=float,
+        default=0.0,
+        help="Low-cut 80Hz anti-rumble 0.0-1.0 (default: 0.0, 0=off)",
+    )
+    parser.add_argument(
         "--list-devices",
         action="store_true",
         help="List available audio devices and exit",
@@ -548,6 +584,7 @@ def main() -> None:
         lr_intensity=args.lr_intensity,
         clarity=args.clarity,
         brillo=args.brillo,
+        low_cut=args.low_cut,
     )
 
     try:
