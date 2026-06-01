@@ -115,4 +115,4 @@ python -m pytest tests/ -v
 ## Licencia
 
 **Propietaria.** Todos los derechos reservados.
-Ver [LICENSE](LICENSE) para términos completos.
+Ver [LICENSE](LICENSE.md) para términos completos.
