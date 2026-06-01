@@ -1,18 +1,18 @@
 # Sesión actual
 
-- **Feature completado:** 14 — high_shelf_boost
+- **Feature completado:** 15 — low_cut_filter
 - **Estado:** done
 - **Costo:** \.00, 10K/10K tokens, 10min
 - **Modelo:** big-pickle
 
 ## Resumen
 
-- Parámetro rillo (0.0-1.0, default 0.0=off)
-- Flag --brillo en CLI
-- SOS highpass 2kHz al canal ipsolateral escalado por brillo * 0.3
-- 14 tests nuevos, 109 total, 0 failing
-- Pipeline: head shadow → presence boost → high-shelf → sum → front/back → elevation → anti-clip
+- Parámetro low_cut (0.0-1.0, default 0.0=off)
+- Flag --low-cut en CLI
+- Butter 4th order highpass 80Hz post-sum, blend dry/wet progresivo
+- 14 tests nuevos, 123 total, 0 failing
+- Pipeline: head shadow → presencia → brillo → sum → front/back → elevation → low-cut → anti-clip
 
 ## Próximo paso
 
-Feature 15 — low_cut_filter (--low-cut)
+Feature 16 — soft_compressor (--compress)

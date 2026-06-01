@@ -1266,3 +1266,141 @@ class TestHighShelfBoost:
         assert hasattr(p, "is_running")
         assert hasattr(p, "latency_ms")
         assert hasattr(p, "list_devices")
+
+
+# =========================================================================
+# Low-cut filter — 80Hz highpass anti-rumble (post-sum)
+# =========================================================================
+
+
+class TestLowCutFilter:
+    """Tests for low-cut (80Hz highpass) anti-rumble filter."""
+
+    def test_low_cut_default(self) -> None:
+        """Default low_cut is 0.0 (off)."""
+        p = RealtimeProcessor()
+        assert p._low_cut == 0.0
+
+    def test_low_cut_custom(self) -> None:
+        """Custom low_cut value is accepted."""
+        p = RealtimeProcessor(low_cut=0.5)
+        assert p._low_cut == 0.5
+
+    def test_low_cut_zero(self) -> None:
+        """low_cut=0 is accepted."""
+        p = RealtimeProcessor(low_cut=0.0)
+        assert p._low_cut == 0.0
+
+    def test_low_cut_raises_if_negative(self) -> None:
+        """Negative low_cut raises ValueError."""
+        with pytest.raises(ValueError, match="low_cut"):
+            RealtimeProcessor(low_cut=-0.1)
+
+    def test_low_cut_raises_if_over_one(self) -> None:
+        """low_cut > 1 raises ValueError."""
+        with pytest.raises(ValueError, match="low_cut"):
+            RealtimeProcessor(low_cut=1.5)
+
+    def test_low_cut_sos_exists(self) -> None:
+        """Low-cut SOS filter is precomputed."""
+        p = RealtimeProcessor(low_cut=0.5)
+        assert hasattr(p, "_low_cut_sos")
+        assert isinstance(p._low_cut_sos, np.ndarray)
+
+    def test_low_cut_sos_is_highpass(self) -> None:
+        """Low-cut SOS filter attenuates low frequencies more than mid."""
+        from scipy.signal import sosfreqz
+
+        p = RealtimeProcessor(low_cut=0.5)
+        w, h = sosfreqz(p._low_cut_sos, fs=48000, worN=48000)
+        # Gain at very low frequencies should be near 0
+        low_gain = float(np.mean(np.abs(h[w < 30])))
+        mid_gain = float(np.mean(np.abs(h[w > 200])))
+        assert mid_gain > low_gain, \
+            "Low-cut should attenuate sub-30Hz more than >200Hz"
+
+    def test_zi_low_cut_none_initially(self) -> None:
+        """Zi low-cut is None before any processing."""
+        p = RealtimeProcessor(low_cut=0.5)
+        assert p._zi_low_cut is None
+
+    def test_zi_low_cut_not_none_after_block(self) -> None:
+        """Zi low-cut is not None after processing with low_cut > 0."""
+        p = RealtimeProcessor(low_cut=0.5)
+        indata = np.random.randn(512, 2).astype(np.float32) * 0.1
+        outdata = np.zeros((512, 1), dtype=np.float32)
+        p._process_block(indata, outdata, 512, None, None)
+        assert p._zi_low_cut is not None
+
+    def test_low_cut_zero_output_unchanged(self) -> None:
+        """With low_cut=0 (and no other cues), output matches sum of channels."""
+        p_zero = RealtimeProcessor(
+            low_cut=0.0, lr_intensity=0.0, fb_intensity=0.0,
+            elevation=0.0, clarity=0.0, brillo=0.0,
+        )
+        rng = np.random.RandomState(42)
+        indata = rng.randn(512, 2).astype(np.float32) * 0.1
+        out_zero = np.zeros((512, 1), dtype=np.float32)
+        p_zero._process_block(indata.copy(), out_zero, 512, None, None)
+        expected = (indata[:, 0] + indata[:, 1]).astype(np.float32)
+        np.testing.assert_allclose(out_zero[:, 0], expected, atol=1e-6)
+
+    def test_low_cut_positive_modifies_output(self) -> None:
+        """Low_cut > 0 modifies the output compared to low_cut=0."""
+        p_zero = RealtimeProcessor(
+            low_cut=0.0, lr_intensity=0.0, fb_intensity=0.0,
+            elevation=0.0, clarity=0.0, brillo=0.0,
+        )
+        p_high = RealtimeProcessor(
+            low_cut=0.8, lr_intensity=0.0, fb_intensity=0.0,
+            elevation=0.0, clarity=0.0, brillo=0.0,
+        )
+        rng = np.random.RandomState(42)
+        indata = rng.randn(512, 2).astype(np.float32) * 0.1
+        out_zero = np.zeros((512, 1), dtype=np.float32)
+        out_high = np.zeros((512, 1), dtype=np.float32)
+        p_zero._process_block(indata.copy(), out_zero, 512, None, None)
+        p_high._process_block(indata.copy(), out_high, 512, None, None)
+        assert not np.allclose(out_zero, out_high, atol=1e-6)
+
+    def test_low_cut_reduces_low_freq_content(self) -> None:
+        """Low-cut should reduce energy in sub-80Hz range compared to no filter."""
+        p_zero = RealtimeProcessor(
+            low_cut=0.0, lr_intensity=0.0, fb_intensity=0.0,
+            elevation=0.0, clarity=0.0, brillo=0.0,
+        )
+        p_cut = RealtimeProcessor(
+            low_cut=1.0, lr_intensity=0.0, fb_intensity=0.0,
+            elevation=0.0, clarity=0.0, brillo=0.0,
+        )
+        # Create a signal with strong low frequency content
+        t = np.arange(512) / 48000
+        low_freq_signal = np.sin(2 * np.pi * 40 * t) * 0.5  # 40Hz tone
+        indata = np.column_stack([low_freq_signal, low_freq_signal]).astype(np.float32)
+        out_zero = np.zeros((512, 1), dtype=np.float32)
+        out_cut = np.zeros((512, 1), dtype=np.float32)
+        p_zero._process_block(indata.copy(), out_zero, 512, None, None)
+        p_cut._process_block(indata.copy(), out_cut, 512, None, None)
+        # RMS of cut should be lower than RMS of no-cut for this low-freq signal
+        rms_zero = float(np.sqrt(np.mean(out_zero ** 2)))
+        rms_cut = float(np.sqrt(np.mean(out_cut ** 2)))
+        assert rms_cut < rms_zero * 0.5, \
+            "Low-cut should significantly reduce 40Hz content"
+
+    def test_low_cut_does_not_introduce_nan(self) -> None:
+        """Low-cut processing does not produce NaN values."""
+        p = RealtimeProcessor(low_cut=0.8)
+        indata = np.random.randn(512, 2).astype(np.float32) * 0.1
+        outdata = np.zeros((512, 1), dtype=np.float32)
+        p._process_block(indata, outdata, 512, None, None)
+        assert not np.any(np.isnan(outdata))
+        assert not np.any(np.isinf(outdata))
+
+    def test_maintains_public_api(self) -> None:
+        """Existing public API is unchanged."""
+        p = RealtimeProcessor(low_cut=0.5)
+        assert hasattr(p, "start")
+        assert hasattr(p, "stop")
+        assert hasattr(p, "is_running")
+        assert hasattr(p, "latency_ms")
+        assert hasattr(p, "list_devices")
