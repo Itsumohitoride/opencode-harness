@@ -592,7 +592,7 @@ class TestMain:
             main()
 
         captured = capsys.readouterr()
-        assert "MonoSpatial" in captured.out
+        assert "Rafear" in captured.out
         assert "Press Ctrl+C" in captured.out
 
 

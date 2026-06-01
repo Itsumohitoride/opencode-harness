@@ -1,4 +1,4 @@
-"""HRTF Engine for MonoSpatial — HRTF database loading and monaural spatial encoding.
+"""HRTF Engine for Rafear — HRTF database loading and monaural spatial encoding.
 
 Provides two main classes:
   - HRTFDatabase: loads .sofa files via libmysofa, interpolates azimuth/elevation,

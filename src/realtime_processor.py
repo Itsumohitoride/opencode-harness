@@ -1,4 +1,4 @@
-"""Realtime audio processor for MonoSpatial — captures stereo audio via
+"""Realtime audio processor for Rafear — captures stereo audio via
 sounddevice, applies monaural spatial encoding per channel, and outputs
 processed mono audio in real time.
 
@@ -589,7 +589,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         Parsed ``argparse.Namespace``.
     """
     parser = argparse.ArgumentParser(
-        description="MonoSpatial — realtime monaural spatial audio processor",
+        description="Rafear — realtime monaural spatial audio processor",
     )
     parser.add_argument(
         "--input-device",
@@ -702,7 +702,7 @@ def main() -> None:
 
     try:
         print(
-            f"Starting MonoSpatial realtime processor (ear={args.ear}, "
+            f"Starting Rafear realtime processor (ear={args.ear}, "
             f"sr={args.sample_rate}, block={args.block_size})...",
         )
         print("Press Ctrl+C to stop.")
