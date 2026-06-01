@@ -28,24 +28,20 @@ from typing import Any
 
 import numpy as np
 import sounddevice as sd
+from scipy.signal import butter, sosfilt
 
 try:
     from src.hrtf_engine import HRTFDatabase, MonauralSpatialEncoder
 except ImportError:
     from hrtf_engine import HRTFDatabase, MonauralSpatialEncoder
 
-try:
-    from src.optimized_convolver import OverlapSaveConvolver
-except ImportError:
-    from optimized_convolver import OverlapSaveConvolver
-
 
 class RealtimeProcessor:
     """Real-time stereo-to-mono spatial audio processor.
 
     Captures stereo input via sounddevice, separates left and right channels,
-    encodes each with :class:`MonauralSpatialEncoder` at opposing azimuths
-    (L at -30°, R at +30°), sums to mono with anti-clip normalisation, and
+    applies head shadow filtering (ipsilateral passthrough, contralateral
+    lowpass at ~4kHz), sums to mono with anti-clip normalisation, and
     writes the result to a mono output stream.
 
     Args:
@@ -93,15 +89,19 @@ class RealtimeProcessor:
             sample_rate=sample_rate,
         )
 
-        # ── precompute OverlapSaveConvolvers for each channel ────────────
-        hrtf_left: np.ndarray = self._hrtf_db.get_filter(-30.0, 0.0)
-        hrtf_right: np.ndarray = self._hrtf_db.get_filter(30.0, 0.0)
-        self._convolver_left: OverlapSaveConvolver = OverlapSaveConvolver(
-            hrtf_left, block_size=block_size,
+        # ── head shadow filter (precompute sos) ─────────────────────
+        # Lowpass a ~4kHz simula la atenuacion de la cabeza
+        # para el canal contralateral
+        self._head_shadow_sos: np.ndarray = butter(
+            2, 4000, btype="low", fs=sample_rate, output="sos",
         )
-        self._convolver_right: OverlapSaveConvolver = OverlapSaveConvolver(
-            hrtf_right, block_size=block_size,
-        )
+
+        # ── filter state (sosfilt zi persistence between blocks) ─────────
+        # Avoids transient at block boundaries that causes low/high freq
+        # interference when processing contralateral channel.
+        # Initialised to None; first call uses zero state and stores zf.
+        self._zi_left: np.ndarray | None = None
+        self._zi_right: np.ndarray | None = None
 
         # ── stream state ──────────────────────────────────────────────────
         self._stream: sd.Stream | None = None
@@ -200,9 +200,11 @@ class RealtimeProcessor:
         Pipeline:
            1. Report stream *status* issues to stderr (non-fatal).
            2. Split stereo input into left and right channels.
-           3. Convolve each channel with its precomputed
-              :class:`OverlapSaveConvolver` (L at -30° IR, R at +30° IR).
-           4. Sum both encoded signals and apply anti-clip normalisation
+           3. Apply head shadow: ipsilateral channel passthrough,
+              contralateral channel lowpass at ~4kHz.
+              Filter state (``zi``) is persisted between blocks to
+              avoid transient interference at block boundaries.
+           4. Sum both channels and apply anti-clip normalisation
               (peak limited to 0.95).
            5. Write the mono result to *outdata*.
            6. Measure callback interval; warn on stderr if > 11 ms.
@@ -221,9 +223,27 @@ class RealtimeProcessor:
         left_ch: np.ndarray = indata[:, 0].astype(np.float32, copy=False)
         right_ch: np.ndarray = indata[:, 1].astype(np.float32, copy=False)
 
-        # Convolve each channel with precomputed HRTF via overlap-save FFT
-        left_encoded: np.ndarray = self._convolver_left.process(left_ch)
-        right_encoded: np.ndarray = self._convolver_right.process(right_ch)
+        # Head shadow model:
+        # Canal ipsolateral (oido funcional): passthrough (transparente)
+        # Canal contralateral: lowpass ~4kHz (cabeza bloquea agudos)
+        if self._ear == "right":
+            left_encoded, self._zi_left = sosfilt(
+                self._head_shadow_sos, left_ch,
+                zi=self._zi_left
+                if self._zi_left is not None
+                else np.zeros((1, 2)),
+            )
+            left_encoded = left_encoded.astype(np.float32)
+            right_encoded = right_ch.astype(np.float32)
+        else:  # ear=left (default)
+            left_encoded = left_ch.astype(np.float32)
+            right_encoded, self._zi_right = sosfilt(
+                self._head_shadow_sos, right_ch,
+                zi=self._zi_right
+                if self._zi_right is not None
+                else np.zeros((1, 2)),
+            )
+            right_encoded = right_encoded.astype(np.float32)
 
         # Sum and anti-clip normalisation (peak limited to 0.95)
         mixed: np.ndarray = left_encoded + right_encoded
