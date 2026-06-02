@@ -1,0 +1,23 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "default_agent": "leader",
+  "instructions": ["AGENTS.md"],
+  "permission": {
+    "bash": {
+      "*": "ask",
+      "python3 scripts/check_harness.py": "allow",
+      "python3 scripts/sync_push.py*": "allow",
+      "python3 scripts/sync_pull.py*": "allow",
+      "python3 scripts/log_cost.py*": "allow",
+      "git status": "allow",
+      "git diff": "allow",
+      "git log*": "allow",
+      "git checkout *": "allow",
+      "git branch*": "allow",
+      "git add -A": "allow",
+      "git add *": "allow",
+      "git commit*": "allow",
+      "gh pr create*": "allow"
+    }
+  }
+}
