@@ -456,15 +456,17 @@
     {
       "id": 17,
       "name": "wasapi_loopback",
-      "title": "Captura directa sin CABLE mediante WASAPI loopback",
-      "description": "Reemplazar CABLE Input por WASAPI loopback nativo de Windows. Captura el mix de audio del sistema directamente, sin Virtual Audio Cable. Auto-detecta el dispositivo de salida por defecto. Elimina dependencia y reduce latencia.",
+      "title": "WASAPI loopback nativo vía Windows API (comtypes)",
+      "description": "Reemplazar CABLE Input por WASAPI loopback nativo de Windows usando comtypes/Windows API directa. Captura el mix de audio del sistema a través de IAudioClient con AUDCLNT_STREAMFLAGS_LOOPBACK. Auto-detecta el dispositivo de salida por defecto. Elimina dependencia de CABLE y de sounddevice para captura.",
       "stack": "python",
       "acceptance": [
-        "Captura audio del sistema via WASAPI loopback (sin CABLE)",
-        "Auto-detecta dispositivo de salida por defecto",
-        "Procesa y envia al headset",
+        "Captura audio del sistema via WASAPI loopback con comtypes (IAudioClient/IAudioCaptureClient)",
+        "Auto-detecta dispositivo de salida por defecto con IMMDeviceEnumerator",
+        "Procesa y envía al headset via sounddevice (solo playback)",
         "Latencia menor o igual que con CABLE",
         "Funciona sin CABLE instalado",
+        "Funciona con cualquier dispositivo de salida (USB, HDMI, analógico)",
+        "Block-size 512 sin buffer underrun",
         "Todos los tests existentes pasan"
       ],
       "status": "testing",
