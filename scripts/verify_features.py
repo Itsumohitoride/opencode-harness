@@ -24,7 +24,7 @@ def _check(cond, msg):
 
 def run():
     try:
-        with open("feature_list.json") as f:
+        with open("feature_list.json", encoding="utf-8") as f:
             data = json.load(f)
     except FileNotFoundError:
         print(f"{RED}[FAIL]  feature_list.json no encontrado{NC}")

@@ -1,0 +1,151 @@
+Actúa como un Senior Product Designer, UX Strategist y Solution Architect especializado en plataformas B2B, inteligencia artificial, visualización de datos, ecosistemas empresariales y experiencias para eventos en vivo.
+
+Necesito que diseñes el planteamiento de experiencia, interfaz y arquitectura funcional para un proyecto llamado:
+
+Rafear — Audio espacial monoaural para gaming y accesibilidad
+
+---
+
+## Contexto del Proyecto
+Rafear es un procesador de audio 3D monoaural en tiempo real para Windows. Permite a personas con audición en un solo oído (como Rafael, sordo del oído izquierdo) percibir dirección espacial en videojuegos y cualquier audio del sistema mediante filtros HRTF (Head-Related Transfer Function). Captura el audio del sistema vía WASAPI loopback, lo procesa con un pipeline de 11 filtros espectrales (head shadow, presencia, brillo, front/back cues, elevación, low-cut, compresor) y envía el resultado mono-procesado al headset del usuario.
+
+El objetivo inicial no es construir una plataforma SaaS completa, sino una primera versión llamada:
+
+Rafear v1.0 (aplicación nativa C++/JUCE)
+
+Aplicación de escritorio Windows nativa (C++/JUCE) con icono en bandeja del sistema, ventana de configuración con sliders paramétricos en tiempo real, y procesamiento de audio de baja latencia. Sin dependencias externas (Python, CABLE, etc.).
+
+Contexto de uso: el usuario abre Rafear mientras juega o consume audio en PC. La app captura el mix de audio del sistema, lo procesa con filtros espaciales, y lo envía al headset. El usuario ajusta parámetros espaciales (head shadow, front/back, elevación, claridad, etc.) mediante sliders en la ventana de configuración para encontrar el balance que mejor se adapte a su percepción auditiva.
+
+---
+
+## Objetivo de Diseño
+Diseñar una experiencia digital limpia, moderna y accesible (estilo Notion) que permita:
+
+- Visualizar el estado del procesamiento de audio en tiempo real (running/idle)
+- Ajustar 7 parámetros espaciales mediante sliders con feedback inmediato
+- Seleccionar el oído funcional (izquierdo/derecho)
+- Iniciar/detener el procesamiento con un botón
+- Seleccionar dispositivos de entrada (loopback) y salida (headset)
+- Operar desde la bandeja del sistema con menú contextual
+
+---
+
+## Componentes Principales de la Fase 1
+
+### Ventana de Configuración Principal (MainComponent)
+DocumentWindow de JUCE con layout de una columna, 3 secciones agrupadas.
+
+Debe mostrar:
+- Sección "Audio Devices": selector de input (loopback), selector de output (headset), botón Start/Stop
+- Sección "Spatial Processing": 7 sliders horizontales con etiqueta, valor numérico y barra de progreso (Head Shadow, Front/Back, Elevation, Clarity, Brillo, Low Cut, Compressor) + selector de oído (Left/Right)
+- Sección "Status": indicador de estado en vivo (Idle / Running / Starting / Stopped)
+
+Los sliders deben verse modernos, con track delgado, thumb sutil, y colores que cambien según el estado (verde cuando activo, gris cuando idle). El diseño general debe ser limpio, con mucho espacio blanco, tipografía refinada, y esquinas suaves.
+
+### Icono de Bandeja (RafearTrayIcon)
+Icono de 16x16 en system tray con menú contextual.
+
+Debe incluir:
+- Icono circular con "R" (ya existe, pero mejorar calidad visual)
+- Menú contextual: "Show Config" | separator | "Quit"
+- Tooltip informativo
+
+### Slider Paramétrico (ParamSlider)
+Componente reutilizable para los 7 parámetros espaciales.
+
+Debe mostrar:
+- Label con nombre del parámetro
+- Slider horizontal con track y thumb customizados
+- Value box a la derecha con el valor numérico (0.00 - 1.00)
+- Color del slider cambia según si el procesamiento está activo
+
+---
+
+## Usuarios Principales
+
+### Rafael (usuario primario)
+Jugador con pérdida auditiva unilateral (sordo del oído izquierdo). Necesita percibir dirección espacial en juegos para competir al mismo nivel que jugadores con audición binaural. Usa Rafear a diario mientras juega. Quiere una interfaz simple que no distraiga: abrir, ajustar una vez y olvidarse.
+
+### Usuario secundario — Gamer con audición normal
+Usa Rafear para mejorar percepción espacial en juegos competitivos (footsteps, dirección de disparos). Quiere ajustar parámetros finos como head shadow y front/back cues.
+
+---
+
+## Pantallas a Diseñar
+
+### Config Window (única pantalla principal)
+Ventana de 500x550 píxeles, no redimensionable, título nativo "Rafear Configuration". Se abre al iniciar la app y se oculta (no cierra) al presionar X. Se muestra desde el menú contextual del tray icon.
+
+Secciones:
+1. Audio Devices — Input/Output selectores + Start/Stop
+2. Spatial Processing — 7 sliders + ear selector
+3. Status — indicador de estado en vivo
+
+### System Tray Menu
+Menú contextual con 3 opciones: "Show Config", separator, "Quit". Sin submenús.
+
+---
+
+## Estilo Visual Deseado
+- Inspirado en Notion: minimalista, limpio, mucho espacio blanco/oscuro
+- Tipografía sans-serif refinada (Inter, SF Pro, o similar)
+- Colores neutros con acentos sutiles (verde para activo, gris para inactivo)
+- Sliders con track delgado (2-3px), thumb circular pequeño (12px)
+- Sin sombras fuertes ni gradientes llamativos
+- Botón Start verde, botón Stop rojo suave
+- Iconografía minimalista (íconos de línea delgada)
+- Modo oscuro como default (adecuado para gaming)
+
+---
+
+## Referencias Conceptuales
+- Notion: limpieza visual, jerarquía tipográfica, uso del espacio blanco
+- Ableton Live: sliders de audio minimalistas con feedback numérico preciso
+- macOS System Preferences: organización por secciones con grupo y etiquetas claras
+
+---
+
+## Restricciones
+- Implementado en C++ con JUCE framework (no HTML/CSS/React)
+- Los componentes UI deben ser nativos de JUCE: Slider, ComboBox, Label, TextButton, GroupComponent
+- Sin librerías externas de UI — solo JUCE
+- Los parámetros deben actualizarse en tiempo real desde el hilo de audio (vía atomics)
+- Ventana no redimensionable (tamaño fijo 500x550)
+- Debe compilar con VS 2022 + JUCE 8.0.13
+
+---
+
+## Entregables Esperados
+1. Concepto general de experiencia.
+2. Arquitectura de información (disposición de secciones).
+3. User journeys principales (abrir app → configurar → jugar).
+4. Lista de pantallas (Config Window + Tray Menu).
+5. Wireframes descriptivos (layout de cada sección con medidas).
+6. Componentes UI principales (ParamSlider, EarSelector, StatusIndicator, DeviceSelector).
+7. Guía visual inicial (paleta de colores, tipografía, espaciado).
+8. Propuesta de navegación (tray → config window, start/stop flow).
+9. Recomendaciones de interacción (feedback háptico visual en sliders, animaciones sutiles).
+10. Recomendaciones para versión MVP (priorizar funcionalidad sobre pulido visual).
+11. Recomendaciones para evolución futura (temas, presets, atajos de teclado).
+12. Riesgos UX y cómo mitigarlos (loop infinito, latencia, confusión de dispositivos).
+
+---
+
+## Estructura del Documento de Diseño
+
+Incluye:
+- Título del proyecto.
+- Visión del producto.
+- Principios de diseño.
+- Experiencia por usuario.
+- Flujo principal.
+- Descripción pantalla por pantalla.
+- Componentes visuales.
+- Estados de carga.
+- Estados de error.
+- Consideraciones para evento en vivo.
+- Consideraciones para escalabilidad futura.
+- Recomendación final del MVP.
+
+El resultado debe estar escrito en español, con tono profesional, estratégico y claro.

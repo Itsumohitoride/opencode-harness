@@ -126,3 +126,95 @@ tests/
 3. **Sin fugas**: mezcla con normalización antirrecorte (peak limiting).
 4. **Configurable**: parámetros ajustables por el usuario (calibración).
 5. **Offline-first**: se puede verificar con archivos antes de tiempo real.
+
+## C++/JUCE Migration (Feature 19)
+
+### Architecture target
+
+```
+[RAW Win32 WASAPI loopback capture thread]
+  ── IMMDeviceEnumerator → GetDefaultAudioEndpoint(eRender)
+  ── IAudioClient::Initialize(SHARED, LOOPBACK)
+  ── IAudioCaptureClient::GetBuffer()
+  ── push samples to AbstractFifo (lock-free ring buffer)
+
+[AbstractFifo ring buffer]
+  │
+  ▼
+[JUCE AudioDeviceManager → AudioIODeviceCallback]
+  ── pop samples from AbstractFifo
+  ── Split stereo L/R channels
+  ── dsp::Convolution (left ear HRTF)
+  ── dsp::Convolution (right ear HRTF)
+  ── dsp::IIR::Filter (head shadow, elevation, presence, high-shelf, low-cut)
+  ── Soft compressor + anti-clip
+  ── Sum to mono output
+  ── Write to output device (headset)
+```
+
+### Directory structure
+```
+src/rafear/
+├── CMakeLists.txt           # CMake 3.25, JUCE 8.0.13 via CPM
+├── CMakePresets.json        # release/debug presets
+├── cmake/CPM.cmake          # dependency manager
+├── Source/
+│   ├── Main.cpp             # START_JUCE_APPLICATION
+│   ├── App/
+│   │   ├── Application.h/cpp   # JUCEApplication (tray app)
+│   ├── Audio/
+│   │   ├── WasapiCapture.h/cpp # RAW Win32 WASAPI loopback
+│   │   ├── AudioPipeline.h/cpp # Spatial pipeline coordinator
+│   ├── DSP/
+│   │   ├── HRTFProcessor.h/cpp # dsp::Convolution wrappers
+│   │   ├── Filters.h/cpp       # IIR filters (head shadow, elevation, etc.)
+│   │   ├── Compressor.h/cpp     # Soft compressor
+│   ├── UI/
+│   │   ├── MainComponent.h/cpp  # DocumentWindow (hidden at startup)
+│   │   ├── TrayComponent.h/cpp  # SystemTrayIconComponent
+│   └── Utils/
+│       └── RingBuffer.h/cpp     # AbstractFifo wrapper
+├── Resources/
+│   └── AppIcon.png
+└── build/
+    └── release/
+        └── Rafear_artefacts/Release/Rafear.exe
+```
+
+### Module dependencies (C++)
+
+| JUCE module | Used for |
+|-------------|---------|
+| juce_core | String, File, Thread, WindowsRegistry |
+| juce_events | Timer, MessageManager |
+| juce_gui_basics | Component, DocumentWindow, Graphics |
+| juce_gui_extra | SystemTrayIconComponent |
+| juce_audio_basics | AudioBuffer, AudioSource |
+| juce_audio_devices | AudioDeviceManager, AudioIODeviceCallback |
+| juce_audio_utils | AudioAppComponent |
+| juce_audio_formats | WavAudioFormat (offline testing) |
+| juce_dsp | Convolution (HRTF), FFT, IIR::Filter |
+
+### Build commands
+```bash
+# Configure
+cmake --preset release
+
+# Build
+cmake --build build/release --config Release
+```
+
+Binary: `src/rafear/build/release/Rafear_artefacts/Release/Rafear.exe`
+
+### Pipeline porting strategy
+1. HRTF loading + interpolation → C++ (libmysofa + dsp::Convolution)
+2. Head shadow filter → sos -> juce::dsp::IIR::Coefficients
+3. Elevation cues → SOS -> IIR::Coefficients
+4. Front/back notch+delay → All-pass IIR + decorrelation
+5. Presence boost → Band-pass IIR
+6. High-shelf → High-pass IIR
+7. Low-cut → High-pass IIR
+8. Soft compressor → Custom gain computer
+9. Anti-clip → Hard limiter
+
+All filters produce bit-identical results to Python reference implementation.

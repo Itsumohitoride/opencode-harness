@@ -1,0 +1,155 @@
+Actúa como un Senior Product Designer, UX Strategist y Solution Architect especializado en plataformas B2B, inteligencia artificial, visualización de datos, ecosistemas empresariales y experiencias para eventos en vivo.
+
+Necesito que diseñes el planteamiento de experiencia, interfaz y arquitectura funcional para un proyecto llamado:
+
+[Nombre del Proyecto] — [Acrónimo/Tagline]
+
+---
+
+## Contexto del Proyecto
+[Descripción general del producto, a qué mercado sirve, qué problema resuelve y cuál es el sistema o plataforma base sobre la que opera.]
+
+El objetivo inicial no es construir una plataforma SaaS completa, sino una primera versión llamada:
+
+[Nombre de la Fase 1 / v0.1]
+
+[Descripción del alcance y propósito de esta primera versión. Qué debe demostrar o hacer visible.]
+
+[Contexto de uso: dónde y cómo será usada la solución — eventos, workshops, demos, etc.]
+
+---
+
+## Objetivo de Diseño
+Diseñar una experiencia digital [adjetivos de estilo] que permita:
+
+- [Objetivo funcional]
+- [N...]
+
+---
+
+## Componentes Principales de la Fase 1
+
+### [Nombre del Componente]
+[Nombre de la pantalla o módulo principal]
+
+Debe mostrar:
+- [Elemento visual o funcional]
+- [N...]
+
+[Restricciones de interacción del componente — si es manipulable, si es solo visual, etc.]
+
+Ejemplo de contenido:
+[Ejemplo concreto de datos que aparecerían en este componente]
+
+---
+
+### [Nombre del Componente]
+[Descripción del componente y su propósito para el usuario]
+
+Debe mostrar:
+- [Elemento]
+- [N...]
+
+---
+
+### [Nombre del Componente]
+[Descripción del componente y su propósito para el evento o audiencia en vivo]
+
+Debe incluir:
+- [Métrica o elemento visual]
+- [N...]
+
+Ejemplo:
+[Ejemplo concreto de datos que aparecerían en pantalla durante el evento]
+
+---
+
+## Usuarios Principales
+
+### [Nombre del Usuario]
+[Necesidad principal y objetivo dentro de la plataforma]
+
+### [N...]
+
+---
+
+## Pantallas a Diseñar
+
+### [Nombre de la Pantalla]
+[Descripción del propósito y contenido de la pantalla]
+
+### [Nombre de la Pantalla — Formulario]
+Debe capturar:
+- [Campo]
+- [N...]
+
+### [Nombre de la Pantalla — Procesamiento]
+[Descripción del estado de procesamiento y qué debe transmitir al usuario]
+
+### [Nombre de la Pantalla — Resultado]
+[Descripción de los resultados que muestra y sus componentes visuales]
+
+### [Nombre de la Pantalla — Visualización]
+[Descripción del contenido, visualización y datos que presenta]
+
+### [Nombre de la Pantalla — Live/Evento]
+[Descripción del contexto de visualización — pantalla grande, evento en vivo — y su propósito]
+
+### [Nombre de la Pantalla — Panel Interno]
+Debe permitir:
+- [Acción]
+- [N...]
+
+---
+
+## Estilo Visual Deseado
+- [Adjetivo o descripción de estilo]
+- [N...]
+
+---
+
+## Referencias Conceptuales
+- [Referencia]: [razón por la que es referencia]
+- [N...]
+
+---
+
+## Restricciones
+- [Restricción técnica o de alcance]
+- [N...]
+
+---
+
+## Entregables Esperados
+1. Concepto general de experiencia.
+2. Arquitectura de información.
+3. User journeys principales.
+4. Lista de pantallas.
+5. Wireframes descriptivos.
+6. Componentes UI principales.
+7. Guía visual inicial.
+8. Propuesta de navegación.
+9. Recomendaciones de interacción.
+10. Recomendaciones para versión MVP.
+11. Recomendaciones para evolución futura.
+12. Riesgos UX y cómo mitigarlos.
+
+---
+
+## Estructura del Documento de Diseño
+
+Incluye:
+- Título del proyecto.
+- Visión del producto.
+- Principios de diseño.
+- Experiencia por usuario.
+- Flujo principal.
+- Descripción pantalla por pantalla.
+- Componentes visuales.
+- Estados de carga.
+- Estados de error.
+- Consideraciones para evento en vivo.
+- Consideraciones para escalabilidad futura.
+- Recomendación final del MVP.
+
+El resultado debe estar escrito en [idioma], con tono profesional, estratégico y claro.

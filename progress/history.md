@@ -5,14 +5,14 @@
 
 ---
 
-## Feature 11 — elevation_cues
-**Estado:** done | **Modelo:** big-pickle | **Costo:** .00 | **Duración:** 15min
-**Descripción:** Discriminación de elevación — boost 7.5-10.5kHz (arriba) + cut 3.5-6.5kHz (abajo). Flag --ud-intensity (0.0-1.0, default 0.3). Integrado en pipeline: head shadow ? front/back ? elevation ? anti-clip.
+## Feature 11 ï¿½ elevation_cues
+**Estado:** done | **Modelo:** big-pickle | **Costo:** .00 | **Duraciï¿½n:** 15min
+**Descripciï¿½n:** Discriminaciï¿½n de elevaciï¿½n ï¿½ boost 7.5-10.5kHz (arriba) + cut 3.5-6.5kHz (abajo). Flag --ud-intensity (0.0-1.0, default 0.3). Integrado en pipeline: head shadow ? front/back ? elevation ? anti-clip.
 **Tests:** 70 tests realtime, 0 failing. 19 tests nuevos (TestElevationCue).
 
-## Feature 12 — hrtf_axis_control
-**Estado:** done | **Modelo:** big-pickle | **Costo:** .00 | **Duración:** 10min
-**Descripción:** Control de intensidad por eje espacial. --lr-intensity (0.0-1.0, default 1.0) para head shadow L/R. Unificado con --fb-intensity y --ud-intensity existentes.
+## Feature 12 ï¿½ hrtf_axis_control
+**Estado:** done | **Modelo:** big-pickle | **Costo:** .00 | **Duraciï¿½n:** 10min
+**Descripciï¿½n:** Control de intensidad por eje espacial. --lr-intensity (0.0-1.0, default 1.0) para head shadow L/R. Unificado con --fb-intensity y --ud-intensity existentes.
 **Tests:** 81 tests realtime, 0 failing. 11 tests nuevos (TestLrIntensity).
 
 ## Feature 13 â€” presence_boost
@@ -34,3 +34,19 @@
 **Estado:** done | **Modelo:** big-pickle | **Costo:** \.00 | **DuraciÃ³n:** 10min
 **DescripciÃ³n:** Soft-knee compressor post-sum. Flag --compress (0.0-1.0, default 0.0=off). Threshold -12dB, ratio 3:1, knee 6dB, attack 1ms, release 50ms. Dry/wet blend progresivo.
 **Tests:** 138 tests realtime, 0 failing. 15 tests nuevos (TestSoftCompressor).
+
+## Feature 19c â€” hrtf_engine_cpp
+**Estado:** testing | **Modelo:** big-pickle | **Costo:** \$0.00 | **DuraciÃ³n:** 1 sesiÃ³n
+**DescripciÃ³n:** Port HRTFDatabase + MonauralSpatialEncoder completo de Python a C++/JUCE. HrtfDatabase con HRTF sintÃ©tico (ventana Gaussiana Ã— seno portador, pico 1.0) + LRU cache. SpatialAudioProcessor con pipeline completo: head shadow (lowpass 4kHz + blend) â†’ presence boost (bandpass 3-5kHz) â†’ brillo (highshelf 2kHz) â†’ suma mono â†’ front/back notch (8kHz + delay 12ms) â†’ elevation cues (bandpass up 7.5-10.5kHz / down 3.5-6.5kHz) â†’ low-cut (highpass 80Hz) â†’ compressor (soft-knee, ratio 3:1, threshold 0.25) â†’ anti-clip (pico â‰¤ 0.95).
+**Archivos:** DSP/HrtfDatabase.h/.cpp, DSP/SpatialAudioProcessor.h/.cpp, DSP/HrtfDatabaseTest.h, Audio/AudioPipeline.h/.cpp (mod), App/Application.h/.cpp (mod).
+**Build:** Rafear.exe 6.7 MB Release, 0 errores, 0 warnings.
+
+## Feature 19 — C++/JUCE migration
+**Estado:** done | **Modelo:** big-pickle | **Duración:** 2026-06-04
+**Descripción:** Reescribir Rafear de Python MVP a aplicación nativa C++/JUCE.
+- 19a: JUCE project scaffold (CMakeLists.txt, CPM, presets, MainComponent placeholder)
+- 19b: WASAPI loopback capture (raw Win32, AbstractFifo RingBuffer)
+- 19c: HRTF engine + SpatialAudioProcessor (head shadow, presence, brillo, front/back, elevation, low-cut, compressor, anti-clip)
+- 19e: System tray config window (sliders, device selectors, parameter control via atomics)
+- 19f: Audio starts/stops only via Start button (no auto-start)
+**PR:** https://github.com/Itsumohitoride/Rafear/pull/17

@@ -51,3 +51,38 @@ Verificar:
 - Tests unitarios para el módulo implementado
 - Sin print() de debug en código de producción
 - Documentación actualizada si la feature cambia APIs públicas
+
+### 7. C++ build verification
+```bash
+cd src/rafear
+cmake --preset release
+cmake --build build/release --config Release
+```
+Verify:
+- Build exits with code 0
+- `build/release/Rafear_artefacts/Release/Rafear.exe` exists (> 1MB)
+- No warnings treated as errors
+
+### 8. C++ unit tests (when implemented)
+```bash
+cd src/rafear/build/release
+ctest -C Release --output-on-failure
+```
+
+### 9. Spatial accuracy test (C++ vs Python)
+Run the C++ app with a known WAV input, then compare output against Python reference:
+```bash
+# Generate test signal with Python
+python src/test_offline.py
+
+# Run C++ pipeline on same input (once test tool exists)
+# Compare outputs bit-by-bit
+```
+
+## C++ Criteria
+- All JUCE modules compile without warnings
+- `WIN32_EXECUTABLE TRUE` for tray app (no console window)
+- Audio callbacks never allocate memory
+- HRTF output is bit-identical to Python reference (±1 LSB float tolerance)
+- No raw Win32 COM leaks (CoInitialize/CoUninitialize balanced)
+- WASAPI loopback capture thread runs at MMCSS priority (Pro Audio)

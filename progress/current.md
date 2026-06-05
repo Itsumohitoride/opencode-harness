@@ -1,23 +1,23 @@
-# Sesión actual
+﻿# Sesion actual
 
-- **Feature:** 17 — wasapi_loopback (v2)
+- **Feature:** 19e — System tray config window with parameter controls
 - **Estado:** in_progress
 - **Branch harness:** develop
-- **Branch src:** feature/17-wasapi_loopback
-- **Inicio:** 2026-06-01T19:20
+- **Branch src:** feature/19e-config-window
+- **Inicio:** 2026-06-04
 
-## Objetivo (actualizado)
+## Decisiones
 
-WASAPI loopback nativo vía Windows API con comtypes.
-Eliminar CABLE + sounddevice capture. Usar IAudioClient con AUDCLNT_STREAMFLAGS_LOOPBACK.
+- All DSP params become atomic for runtime changes
+- Internal helpers take params as args for consistency within one callback
+- RafearTrayIcon subclasses SystemTrayIconComponent for right-click menu
 
-## Plan v2
+## Plan
 
-1. Crear WasapiLoopbackCapture class (comtypes → Windows WASAPI)
-2. Modificar RealtimeProcessor: loopback capture thread + output-only sd.OutputStream
-3. Tests con mocking
-4. Verificar sin CABLE
-
-## Próximo paso
-
-Implementar WasapiLoopbackCapture + integración.
+1. Make all float params atomic in SpatialAudioProcessor.h + add setParam()
+2. Update SpatialAudioProcessor.cpp — store() in prepare, load atomics in process()
+3. Rewrite MainComponent.h as full config window with sliders/selectors
+4. Rewrite MainComponent.cpp with layout and parameter controls
+5. Update Application.h — add RafearTrayIcon + forward declare MainComponent with AudioPipeline&
+6. Update Application.cpp — wire tray menu, pass pipeline to MainComponent
+7. Build and fix any compilation errors

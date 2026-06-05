@@ -59,3 +59,57 @@ Cada módulo debe tener docstring al inicio explicando:
 2. Parámetros de entrada/salida principales
 3. Dependencias externas
 4. Ejemplo breve de uso (si aplica)
+
+## Stack: C++/JUCE
+
+### Build system
+| Aspect | Convention |
+|--------|-----------|
+| CMake | 3.25 minimum, CMakePresets.json |
+| Generator | Visual Studio 17 2022, x64 |
+| C++ standard | C++20 |
+| JUCE | 8.0.13 via CPM (auto-download) |
+| Compiler flags | `/arch:AVX2 /fp:fast /MP` |
+
+### Style
+| Aspect | Convention |
+|--------|-----------|
+| Header guard | `#pragma once` |
+| Naming: classes | PascalCase |
+| Naming: methods/functions | camelCase |
+| Naming: member variables | camelCase with `_` suffix |
+| Naming: constants | kPrefixedCamelCase |
+| Naming: files | PascalCase.cpp/.h |
+| Indentation | 4 spaces (JUCE default) |
+
+### Audio callback rules (CRITICAL)
+- NO memory allocation in audio thread (no `new`, `malloc`, `std::vector::push_back`)
+- NO mutex locks in audio thread (use `std::atomic` with relaxed ordering)
+- NO file I/O, network, or system calls in audio thread
+- NO exceptions in audio thread
+- Pre-allocate all DSP objects in `prepareToPlay()` / `audioDeviceAboutToStart()`
+- Use `juce::AudioBuffer<float>` for sample data
+- Use `juce::dsp::ProcessSpec` for sample rate / block size configuration
+
+### Platform-specific
+| Aspect | Convention |
+|--------|-----------|
+| Windows | `WIN32_EXECUTABLE TRUE` for tray app |
+| COM | Balance CoInitialize/CoUninitialize, prefer RAII wrappers |
+| WASAPI | Use raw Win32 for loopback (JUCE has no loopback support) |
+| MMCSS | Register capture thread with "Pro Audio" class |
+
+### Tests
+| Aspect | Convention |
+|--------|-----------|
+| Framework | JUCE unit test class or CTest |
+| Location | `tests/` or inline in module |
+| HRTF IR | Synthetic impulse (dirac) for unit tests |
+| Float comparison | Use `approximatelyEqual()` or absolute tolerance |
+
+### Error handling
+| Error type | Mechanism |
+|------------|----------|
+| COM errors | `HRESULT` checks with `jassert` or `juce::Result` |
+| Audio device failure | `AudioDeviceManager::initialise()` returns error string |
+| File not found | `juce::File::exists()` before access |
