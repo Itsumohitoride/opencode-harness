@@ -50,3 +50,23 @@
 - 19e: System tray config window (sliders, device selectors, parameter control via atomics)
 - 19f: Audio starts/stops only via Start button (no auto-start)
 **PR:** https://github.com/Itsumohitoride/Rafear/pull/17
+
+## Session: 2026-06-08 — Feature 22e (fix_dropdown_popup_background)
+**Date:** 2026-06-08 23:56 UTC
+**Feature:** 22e — fix_dropdown_popup_background
+**Branch src:** feature/22-ui_redesign_notion
+**Commit:** 7f3405d
+**PR:** https://github.com/Itsumohitoride/Rafear/pull/19
+
+### What was done
+1. Fixed ComboBox dropdown popup white background by overriding drawPopupMenuBackgroundWithOptions in RafearLookAndFeel
+2. Changed getPopupMenuBorderSize from 1 to 0 to eliminate white border gap
+3. Applied custom RafearLookAndFeel to system tray icon right-click context menu (was using default JUCE)
+4. Build: succeeded
+5. Review: APPROVED
+
+### Cost
+- Model: big pickle
+- Tokens: 70K in / 30K out
+- Cost: - Duration: 10min
+- Agents: leader, implementer, reviewer

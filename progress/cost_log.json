@@ -89,6 +89,21 @@
         "implementer",
         "reviewer"
       ]
+    },
+    {
+      "date": "2026-06-08T23:56:06.162808Z",
+      "feature_id": "22e",
+      "feature_name": "fix_dropdown_popup_background",
+      "model": "big pickle",
+      "tokens_in": 70000,
+      "tokens_out": 30000,
+      "cost_usd": 0.0,
+      "duration": "10min",
+      "agents": [
+        "leader",
+        "implementer",
+        "reviewer"
+      ]
     }
   ]
 }
