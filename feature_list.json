@@ -1,928 +1,963 @@
-﻿{
-    "project":  "MonoSpatial",
-    "description":  "Audio 3D monoaural para gaming y accesibilidad. Permite a personas con audiciÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â³n de un solo lado percibir direcciÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â³n espacial en videojuegos mediante filtros HRTF.",
-    "rules":  {
-                  "one_feature_at_a_time":  true,
-                  "require_tests_to_close":  true,
-                  "valid_status":  [
-                                       "pending",
-                                       "in_progress",
-                                       "testing",
-                                       "done",
-                                       "blocked"
-                                   ]
-              },
-    "features":  [
-                     {
-                         "id":  1,
-                         "name":  "setup_project",
-                         "title":  "ConfiguraciÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â³n inicial del proyecto",
-                         "description":  "Bootstrap del proyecto MonoSpatial: personalizar docs, scripts/verify_env.py y estructura base para el stack Python DSP.",
-                         "stack":  "python",
-                         "acceptance":  [
-                                            "docs/architecture.md describe la arquitectura de audio 3D monoaural (no texto genÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â©rico)",
-                                            "docs/conventions.md define convenciones para Python DSP (naming de seÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â±ales, latencia, performance)",
-                                            "scripts/verify_env.py verifica numpy, scipy, sounddevice, soundfile, PyQt6",
-                                            "python scripts/check_harness.py termina sin errores",
-                                            "src/ contiene los planos de arquitectura y cÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â³digo como documentaciÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â³n"
-                                        ],
-                         "status":  "done",
-                         "created_at":  "2026-05-31T00:00:00Z",
-                         "transitions":  [
-                                             {
-                                                 "from":  "pending",
-                                                 "to":  "done",
-                                                 "at":  "2026-05-31T00:00:00Z"
-                                             }
-                                         ]
-                     },
-                     {
-                         "id":  2,
-                         "name":  "hrtf_engine",
-                         "title":  "HRTF Engine ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â carga de bases de datos .sofa y codificaciÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â³n espacial monoaural",
-                         "description":  "Implementar HRTFDatabase (carga de archivos .sofa vÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â­a libmysofa, interpolaciÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â³n azimuth/elevation, cachÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â© de filtros) y MonauralSpatialEncoder (convoluciÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â³n HRTF, spectral elevation cues, front-back cues, distance gain, mezcla de fuentes).",
-                         "stack":  "python",
-                         "acceptance":  [
-                                            "HRTFDatabase carga un archivo .sofa y extrae filtros por azimuth/elevation",
-                                            "HRTFDatabase cachea filtros para evitar recarga en mismos ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¡ngulos",
-                                            "MonauralSpatialEncoder.encode_source aplica convoluciÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â³n + elevation cues + front-back cues + distance gain",
-                                            "MonauralSpatialEncoder.mix_sources mezcla mÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Âºltiples fuentes con normalizaciÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â³n antirrecorte",
-                                            "Todos los parÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¡metros de entrada tienen validaciÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â³n de rango (azimuth ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â±180, elevation ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â±90, distance \u003e 0)",
-                                            "Type hints en todas las funciones pÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Âºblicas",
-                                            "Tests unitarios para cada mÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â©todo"
-                                        ],
-                         "status":  "done",
-                         "created_at":  "2026-05-31T00:00:00Z",
-                         "transitions":  [
-                                             {
-                                                 "from":  "pending",
-                                                 "to":  "done",
-                                                 "at":  "2026-06-01T01:56:10Z"
-                                             }
-                                         ]
-                     },
-                     {
-                         "id":  3,
-                         "name":  "optimized_convolver",
-                         "title":  "ConvoluciÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â³n optimizada ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â Overlap-Save FFT",
-                         "description":  "Implementar OverlapSaveConvolver con FFT precomputada para latencia mÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â­nima. Soporta IR de longitud arbitraria y procesamiento por bloques.",
-                         "stack":  "python",
-                         "acceptance":  [
-                                            "OverlapSaveConvolver procesa bloques de audio con overlap-save (FFT)",
-                                            "FFT del IR se precomputa una vez en __init__",
-                                            "El estado overlap se mantiene entre llamadas a process()",
-                                            "Soporta IR de cualquier longitud (no solo potencia de 2)",
-                                            "El output tiene la misma longitud que el input block",
-                                            "Rendimiento: block_size=512 procesa en \u003c 11ms",
-                                            "Tests unitarios con IR sintÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â©tica vs fftconvolve de scipy como referencia"
-                                        ],
-                         "status":  "done",
-                         "created_at":  "2026-05-31T00:00:00Z",
-                         "transitions":  [
-                                             {
-                                                 "from":  "pending",
-                                                 "to":  "done",
-                                                 "at":  "2026-06-01T01:56:10Z"
-                                             }
-                                         ]
-                     },
-                     {
-                         "id":  4,
-                         "name":  "offline_test",
-                         "title":  "Test offline ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â validaciÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â³n con archivos WAV",
-                         "description":  "Implementar script test_offline.py que toma un archivo WAV estÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â©reo, aplica codificaciÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â³n espacial monoaural y escribe el resultado como WAV mono.",
-                         "stack":  "python",
-                         "acceptance":  [
-                                            "test_offline.py lee un archivo WAV estÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â©reo con soundfile",
-                                            "Separa canal izquierdo y derecho como fuentes espaciales separadas",
-                                            "Aplica MonauralSpatialEncoder a cada fuente con azimuths opuestos (ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â±30ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â°)",
-                                            "Mezcla las fuentes en una sola salida mono",
-                                            "Escribe el resultado como WAV mono de 16-bit",
-                                            "Maneja errores de archivo inexistente o formato no soportado",
-                                            "Se puede ejecutar como script: python src/test_offline.py \u003cinput\u003e \u003coutput\u003e"
-                                        ],
-                         "status":  "done",
-                         "created_at":  "2026-05-31T00:00:00Z",
-                         "transitions":  [
-                                             {
-                                                 "from":  "pending",
-                                                 "to":  "done",
-                                                 "at":  "2026-06-01T01:56:10Z"
-                                             }
-                                         ]
-                     },
-                     {
-                         "id":  5,
-                         "name":  "realtime_processor",
-                         "title":  "Procesamiento en tiempo real ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â captura y procesamiento de audio vivo",
-                         "description":  "Implementar realtime_processor.py que captura audio del sistema via sounddevice, procesa por bloques de 512 samples (~10.6ms) y envÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â­a salida monoaural procesada al auricular.",
-                         "stack":  "python",
-                         "acceptance":  [
-                                            "Lista dispositivos de audio disponibles con sd.query_devices()",
-                                            "Callback process_block procesa entrada estÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â©reo en bloques de 512 frames",
-                                            "Latencia de procesamiento \u003c 11ms con block_size=512 a 48kHz",
-                                            "Maneja status de stream (reporta errores sin crashear)",
-                                            "Se puede detener con Ctrl+C limpiamente",
-                                            "Usa HRTFDatabase y MonauralSpatialEncoder del mÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â³dulo hrtf_engine",
-                                            "DocumentaciÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â³n de configuraciÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â³n: selecciÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â³n de dispositivo input/output"
-                                        ],
-                         "status":  "done",
-                         "created_at":  "2026-05-31T00:00:00Z",
-                         "transitions":  [
-                                             {
-                                                 "from":  "pending",
-                                                 "to":  "done",
-                                                 "at":  "2026-06-01T01:56:10Z"
-                                             }
-                                         ]
-                     },
-                     {
-                         "id":  6,
-                         "name":  "calibration_ui",
-                         "title":  "App de calibraciÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â³n ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â interfaz PyQt6 para ajuste de parÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¡metros HRTF",
-                         "description":  "Implementar calibration_ui.py con PyQt6: selector de oÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â­do funcional, sliders de intensidad HRTF y reverb trasero, test de discriminaciÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â³n front/back con feedback inmediato.",
-                         "stack":  "python",
-                         "acceptance":  [
-                                            "Ventana PyQt6 se abre sin errores",
-                                            "Slider de intensidad HRTF (0-100%) ajusta el gain del filtro HRTF",
-                                            "Slider de reverb trasero (0-100%) ajusta el nivel de front-back cue",
-                                            "BotÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â³n \u0027Reproducir sonido de prueba\u0027 genera ruido y lo reproduce en ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¡ngulo aleatorio (0ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â° o 180ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â°)",
-                                            "Botones \u0027Adelante\u0027/\u0027AtrÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¡s\u0027 permiten al usuario responder la direcciÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â³n percibida",
-                                            "Label muestra feedback inmediato (correcto/incorrecto)",
-                                            "Se lanza como script: python src/calibration_ui.py"
-                                        ],
-                         "status":  "done",
-                         "created_at":  "2026-05-31T00:00:00Z",
-                         "transitions":  [
-                                             {
-                                                 "from":  "pending",
-                                                 "to":  "done",
-                                                 "at":  "2026-06-01T01:56:10Z"
-                                             }
-                                         ]
-                     },
-                     {
-                         "id":  7,
-                         "name":  "ear_flag_test_offline",
-                         "title":  "Flag --ear para test_offline.py (seleccion de oido funcional)",
-                         "description":  "Agregar flag --ear left|right a test_offline.py para seleccionar el oido funcional. El script procesa el WAV aplicando HRTF al oido seleccionado.",
-                         "stack":  "python",
-                         "acceptance":  [
-                                            "test_offline.py acepta --ear left|right",
-                                            "Default es left (compatibilidad hacia atras)",
-                                            "Con --ear right, el procesamiento espacial se optimiza para oido derecho",
-                                            "Todos los tests existentes pasan"
-                                        ],
-                         "status":  "done",
-                         "created_at":  "2026-05-31T00:00:00Z",
-                         "transitions":  [
-                                             {
-                                                 "from":  "pending",
-                                                 "to":  "in_progress",
-                                                 "at":  "2026-05-31T00:00:00Z"
-                                             },
-                                             {
-                                                 "from":  "in_progress",
-                                                 "to":  "done",
-                                                 "at":  "2026-05-31T00:00:00Z"
-                                             }
-                                         ]
-                     },
-                     {
-                         "id":  8,
-                         "name":  "realtime_perf_optimization",
-                         "title":  "Optimizar realtime_processor.py con OverlapSaveConvolver para eliminar buffer underruns",
-                         "description":  "Reemplazar fftconvolve (scipy) en realtime_processor._process_block por OverlapSaveConvolver (precomputado). Reduce tiempo de procesamiento por bloque, elimina interferencia por buffer underrun a block_size=512.",
-                         "stack":  "python",
-                         "acceptance":  [
-                                            "OverlapSaveConvolver creado en __init__ con IR precomputado para cada canal",
-                                            "_process_block usa .process() en vez de encode_source() con fftconvolve",
-                                            "Block-size 512 funciona sin interferencia audible",
-                                            "Todos los tests existentes pasan",
-                                            "No rompe la API pÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Âºblica de RealtimeProcessor"
-                                        ],
-                         "status":  "done",
-                         "created_at":  "2026-05-31T00:00:00Z",
-                         "transitions":  [
-                                             {
-                                                 "from":  "pending",
-                                                 "to":  "in_progress",
-                                                 "at":  "2026-05-31T00:00:00Z"
-                                             },
-                                             {
-                                                 "from":  "in_progress",
-                                                 "to":  "done",
-                                                 "at":  "2026-05-31T00:00:00Z"
-                                             }
-                                         ]
-                     },
-                     {
-                         "id":  9,
-                         "name":  "natural_spatial_audio",
-                         "title":  "Audio espacial natural con head shadow + paneo (sin coloracion HRTF)",
-                         "description":  "Reemplazar el HRTF sintetico (filtro pasa-banda que suena a caja) por un modelo de head shadow: canal izquierdo passthrough, canal derecho filtro lowpass a ~4kHz (simula bloqueo de la cabeza), paneo para centrar. Audio transparente sin coloracion.",
-                         "stack":  "python",
-                         "acceptance":  [
-                                            "Canal izquierdo suena natural, sin filtrado",
-                                            "Canal derecho tiene lowpass suave (~4kHz, head shadow)",
-                                            "Mezcla mono con anti-clip normalisation",
-                                            "No suena a caja/banera",
-                                            "Block-size 512 funciona sin buffer underrun",
-                                            "Todos los tests existentes pasan"
-                                        ],
-                         "status":  "done",
-                         "created_at":  "2026-05-31T00:00:00Z",
-                         "transitions":  [
-                                             {
-                                                 "from":  "pending",
-                                                 "to":  "in_progress",
-                                                 "at":  "2026-05-31T00:00:00Z"
-                                             },
-                                             {
-                                                 "from":  "in_progress",
-                                                 "to":  "done",
-                                                 "at":  "2026-06-01T01:56:10Z"
-                                             }
-                                         ]
-                     },
-                     {
-                         "id":  10,
-                         "name":  "front_back_cues",
-                         "title":  "Discriminacion frontal/trasera ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â notches espectrales + delay para sonidos detras",
-                         "description":  "Agregar senales front/back al pipeline de head shadow. Para sonidos detras (azimuth \u003e 90 o \u003c -90): notch filter ~8kHz (pinna shadow) + delay ~12ms + atenuacion (-12dB). Para sonidos adelante: leave limpio o boost sutil. Independiente del eje L/R.",
-                         "stack":  "python",
-                         "acceptance":  [
-                                            "Sonidos frontales suenan sin coloracion artificial",
-                                            "Sonidos traseros tienen notch ~8kHz + delay perceptible",
-                                            "Funciona combinado con head shadow (L/R)",
-                                            "Block-size 512 sin buffer underrun",
-                                            "Todos los tests existentes pasan"
-                                        ],
-                         "status":  "done",
-                         "created_at":  "2026-05-31T00:00:00Z",
-                         "transitions":  [
-                                             {
-                                                 "from":  "pending",
-                                                 "to":  "done",
-                                                 "at":  "2026-06-01T01:56:10Z"
-                                             }
-                                         ]
-                     },
-                     {
-                         "id":  11,
-                         "name":  "elevation_cues",
-                         "title":  "Discriminacion de elevacion (arriba/abajo) ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â filtros espectrales segun elevacion",
-                         "description":  "Agregar senales de elevacion al pipeline. Para sonidos arriba (\u003e20 deg): boost 7.5-10.5kHz (simula reflexion del pabellon). Para sonidos abajo (\u003c-20 deg): cut 3.5-6.5kHz. Basado en el codigo existente de MonauralSpatialEncoder.apply_spectral_elevation_cue pero integrado en el nuevo pipeline de head shadow.",
-                         "stack":  "python",
-                         "acceptance":  [
-                                            "Sonidos sobre la cabeza tienen boost en 7.5-10.5kHz",
-                                            "Sonidos bajo la cabeza tienen cut en 3.5-6.5kHz",
-                                            "Funciona en combinacion con head shadow + front/back",
-                                            "Block-size 512 sin buffer underrun",
-                                            "Todos los tests existentes pasan"
-                                        ],
-                         "status":  "done",
-                         "created_at":  "2026-05-31T00:00:00Z",
-                         "transitions":  [
-                                             {
-                                                 "from":  "pending",
-                                                 "to":  "in_progress",
-                                                 "at":  "2026-06-01T01:38:52Z"
-                                             },
-                                             {
-                                                 "from":  "in_progress",
-                                                 "to":  "testing",
-                                                 "at":  "2026-06-01T01:46:26Z"
-                                             },
-                                             {
-                                                 "from":  "testing",
-                                                 "to":  "done",
-                                                 "at":  "2026-06-01T01:51:37Z"
-                                             }
-                                         ]
-                     },
-                     {
-                         "id":  12,
-                         "name":  "hrtf_axis_control",
-                         "title":  "Control de intensidad por eje espacial (HRTF intensity sliders)",
-                         "description":  "Agregar parametros independientes para controlar la intensidad de cada eje espacial: --lr-intensity (0-100%), --fb-intensity (0-100%), --ud-intensity (0-100%). Permite al usuario calibrar que tan fuerte es cada senal espacial segun su percepcion. Los valores default deben sonar naturales.",
-                         "stack":  "python",
-                         "acceptance":  [
-                                            "--lr-intensity controla que tan fuerte es el head shadow (0-100%)",
-                                            "--fb-intensity controla el notch trasero (0-100%, 0=desactivado)",
-                                            "--ud-intensity controla el boost/cut de elevacion (0-100%, 0=desactivado)",
-                                            "Default para cada eje suena natural",
-                                            "Funciona en realtime_processor y test_offline",
-                                            "Block-size 512 sin buffer underrun",
-                                            "Todos los tests existentes pasan"
-                                        ],
-                         "status":  "done",
-                         "created_at":  "2026-05-31T00:00:00Z",
-                         "transitions":  [
-                                             {
-                                                 "from":  "pending",
-                                                 "to":  "in_progress",
-                                                 "at":  "2026-06-01T01:56:16Z"
-                                             },
-                                             {
-                                                 "from":  "in_progress",
-                                                 "to":  "testing",
-                                                 "at":  "2026-06-01T02:01:49Z"
-                                             },
-                                             {
-                                                 "from":  "testing",
-                                                 "to":  "done",
-                                                 "at":  "2026-06-01T02:08:38Z"
-                                             }
-                                         ]
-                     },
-                     {
-                         "id":  13,
-                         "name":  "presence_boost",
-                         "title":  "Presence boost ~3-5kHz para claridad de voces y detalles",
-                         "description":  "Bandpass 3-5kHz mezclado sutilmente al canal ipsolateral. Mejora nitidez de voces, pasos y detalles agudos en gaming. Flag --clarity (0.0-1.0, default 0.0=off).",
-                         "stack":  "python",
-                         "acceptance":  [
-                                            "Canal ipsolateral recibe boost sutil en 3-5kHz",
-                                            "Flag --clarity 0.0-1.0 (default 0.0=off)",
-                                            "No afecta canal contralateral ni latencia",
-                                            "Block-size 512 sin buffer underrun",
-                                            "Todos los tests existentes pasan"
-                                        ],
-                         "status":  "done",
-                         "created_at":  "2026-06-01T02:53:48Z",
-                         "transitions":  [
-                                             {
-                                                 "from":  "pending",
-                                                 "to":  "in_progress",
-                                                 "at":  "2026-06-01T03:10:25Z"
-                                             },
-                                             {
-                                                 "from":  "in_progress",
-                                                 "to":  "testing",
-                                                 "at":  "2026-06-01T03:14:23Z"
-                                             },
-                                             {
-                                                 "from":  "testing",
-                                                 "to":  "done",
-                                                 "at":  "2026-06-01T03:48:55Z"
-                                             }
-                                         ]
-                     },
-                     {
-                         "id":  14,
-                         "name":  "high_shelf_boost",
-                         "title":  "High-shelf \u003e2kHz para brillo general",
-                         "description":  "High-shelf filter a 2kHz para dar brillo al canal ipsolateral. Complementa presence boost. Flag --brillo (0.0-1.0, default 0.0=off).",
-                         "stack":  "python",
-                         "acceptance":  [
-                                            "High-shelf a 2kHz aplicado al canal ipsolateral",
-                                            "Flag --brillo 0.0-1.0 (default 0.0=off)",
-                                            "No afecta canal contralateral ni latencia",
-                                            "Block-size 512 sin buffer underrun",
-                                            "Todos los tests existentes pasan"
-                                        ],
-                         "status":  "done",
-                         "created_at":  "2026-06-01T02:53:48Z",
-                         "transitions":  [
-                                             {
-                                                 "from":  "pending",
-                                                 "to":  "in_progress",
-                                                 "at":  "2026-06-01T03:54:50Z"
-                                             },
-                                             {
-                                                 "from":  "testing",
-                                                 "to":  "done",
-                                                 "at":  "2026-06-01T04:33:07Z"
-                                             }
-                                         ]
-                     },
-                     {
-                         "id":  15,
-                         "name":  "low_cut_filter",
-                         "title":  "Low-cut ~80Hz para eliminar rumble de bajos",
-                         "description":  "Highpass a 80Hz para eliminar ruido de subsuelo, motores, viento. Comun en headsets gaming para limpiar la senal. Flag --low-cut (0.0-1.0, default 0.0=off, 1.0=filtro completo).",
-                         "stack":  "python",
-                         "acceptance":  [
-                                            "Highpass 80Hz elimina frecuencias sub-sonoras",
-                                            "Flag --low-cut 0.0-1.0 (default 0.0=off)",
-                                            "Aplicado al mix completo (post-sum)",
-                                            "Block-size 512 sin buffer underrun",
-                                            "Todos los tests existentes pasan"
-                                        ],
-                         "status":  "done",
-                         "created_at":  "2026-06-01T02:53:48Z",
-                         "transitions":  [
-                                             {
-                                                 "from":  "pending",
-                                                 "to":  "in_progress",
-                                                 "at":  "2026-06-01T04:41:12Z"
-                                             },
-                                             {
-                                                 "from":  "testing",
-                                                 "to":  "done",
-                                                 "at":  "2026-06-01T04:54:33Z"
-                                             }
-                                         ]
-                     },
-                     {
-                         "id":  16,
-                         "name":  "soft_compressor",
-                         "title":  "Compresor suave para emparejar volumen entre sonidos",
-                         "description":  "Compresor de crest factor suave. Reduce picos fuertes y sube pasajes suaves. Mejora audibilidad en gaming sin distorsion. Flag --compress (0.0-1.0, default 0.0=off).",
-                         "stack":  "python",
-                         "acceptance":  [
-                                            "Compresion suave reduce crest factor sin distorsion",
-                                            "Flag --compress 0.0-1.0 (default 0.0=off)",
-                                            "Aplicado al mix completo antes de anti-clip",
-                                            "Block-size 512 sin buffer underrun",
-                                            "Todos los tests existentes pasan"
-                                        ],
-                         "status":  "done",
-                         "created_at":  "2026-06-01T02:53:48Z",
-                         "transitions":  [
-                                             {
-                                                 "from":  "pending",
-                                                 "to":  "in_progress",
-                                                 "at":  "2026-06-01T04:55:34Z"
-                                             },
-                                             {
-                                                 "from":  "testing",
-                                                 "to":  "done",
-                                                 "at":  "2026-06-01T05:09:57Z"
-                                             }
-                                         ]
-                     },
-                     {
-                         "id":  17,
-                         "name":  "wasapi_loopback",
-                         "title":  "WASAPI loopback nativo vÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â­a Windows API (comtypes)",
-                         "description":  "Reemplazar CABLE Input por WASAPI loopback nativo de Windows usando comtypes/Windows API directa. Captura el mix de audio del sistema a travÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â©s de IAudioClient con AUDCLNT_STREAMFLAGS_LOOPBACK. Auto-detecta el dispositivo de salida por defecto. Elimina dependencia de CABLE y de sounddevice para captura.",
-                         "stack":  "python",
-                         "acceptance":  [
-                                            "Captura audio del sistema via WASAPI loopback con comtypes (IAudioClient/IAudioCaptureClient)",
-                                            "Auto-detecta dispositivo de salida por defecto con IMMDeviceEnumerator",
-                                            "Procesa y envÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â­a al headset via sounddevice (solo playback)",
-                                            "Latencia menor o igual que con CABLE",
-                                            "Funciona sin CABLE instalado",
-                                            "Funciona con cualquier dispositivo de salida (USB, HDMI, analÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â³gico)",
-                                            "Block-size 512 sin buffer underrun",
-                                            "Todos los tests existentes pasan"
-                                        ],
-                         "status":  "done",
-                         "created_at":  "2026-06-01T02:53:48Z",
-                         "transitions":  [
-                                             {
-                                                 "from":  "pending",
-                                                 "to":  "in_progress",
-                                                 "at":  "2026-06-01T19:20:00Z"
-                                             },
-                                             {
-                                                 "from":  "in_progress",
-                                                 "to":  "testing",
-                                                 "at":  "2026-06-01T19:35:00Z"
-                                             },
-                                             {
-                                                 "from":  "testing",
-                                                 "to":  "in_progress",
-                                                 "at":  "2026-06-01T20:00:00Z"
-                                             },
-                                             {
-                                                 "from":  "in_progress",
-                                                 "to":  "testing",
-                                                 "at":  "2026-06-02T01:08:33.898630+00:00"
-                                             },
-                                             {
-                                                 "from":  "testing",
-                                                 "to":  "done",
-                                                 "at":  "2026-06-04T18:14:30.3870780Z"
-                                             },
-                                             {
-                                                 "from":  "testing",
-                                                 "to":  "done",
-                                                 "at":  "2026-06-04T18:14:35.2138816Z"
-                                             }
-                                         ],
-                         "tags":  [
-                                      "mvp-pragmatic"
-                                  ],
-                         "decision_reason":  "WASAPI loopback en Python es fragil (varia entre versiones de Windows/drivers). Para el MVP Python, mantener CABLE+sounddevice es mas confiable. WASAPI loopback nativo se implementara en feature 19 (migracion C++/JUCE), donde JUCE tiene soporte WASAPI robusto."
-                     },
-                     {
-                         "id":  18,
-                         "name":  "app_background",
-                         "title":  "App Python que corre en segundo plano (bandeja de sistema)",
-                         "description":  "Convertir Rafear en una app Python que se ejecuta en background con icono en bandeja de sistema. Sin terminal visible. Auto-detecta dispositivos CABLE + headset. Inicio automatico con Windows.",
-                         "stack":  "fullstack",
-                         "acceptance":  [
-                                            "App se ejecuta en background sin ventana de terminal",
-                                            "Icono en bandeja de sistema (system tray)",
-                                            "Auto-detecta CABLE Output y headset al iniciar",
-                                            "Inicio automatico con Windows (opcional)",
-                                            "Click derecho en icono: iniciar/detener/configurar/salir",
-                                            "Ventana de configuracion basica (flags)",
-                                            "Todos los tests existentes pasan"
-                                        ],
-                         "status":  "blocked",
-                         "created_at":  "2026-06-01T02:53:48Z",
-                         "transitions":  [
-                                             {
-                                                 "from":  "pending",
-                                                 "to":  "blocked",
-                                                 "at":  "2026-06-04T18:24:27.2410774Z"
-                                             }
-                                         ],
-                         "tags":  [
-                                      "superseded-by-19"
-                                  ],
-                         "decision_reason":  "Se salta porque el MVP Python con system tray se reescribira en C++/JUCE (feature 19). JUCE tiene system tray nativo, auto-detect y mejor latencia."
-                     },
-                     {
-                         "id":  19,
-                         "name":  "cpp_juce_migration",
-                         "title":  "Migracion a aplicacion nativa C++ con JUCE framework",
-                         "description":  "Reescribir el pipeline de procesamiento y la app en C++ usando JUCE framework. Aplicacion standalone instalable, menor latencia, sin dependencia de Python.",
-                         "stack":  "fullstack",
-                         "acceptance":  [
-                                            "Pipeline de procesamiento reescrito en C++ con JUCE",
-                                            "Latencia igual o menor que MVP Python",
-                                            "Instalador MSI o similar",
-                                            "Auto-deteccion de dispositivos",
-                                            "Funciona sin Python instalado",
-                                            "UI de configuracion basica",
-                                            "Resultados identicos al MVP Python (mismos filtros)"
-                                        ],
-                         "status":  "done",
-                         "created_at":  "2026-06-01T02:56:32Z",
-                         "transitions":  [
-                                             {
-                                                 "from":  "pending",
-                                                 "to":  "in_progress",
-                                                 "at":  "2026-06-04T18:24:27.2500763Z"
-                                             },
-                                             {
-                                                 "from":  "in_progress",
-                                                 "to":  "done",
-                                                 "at":  "2026-06-05T01:08:49Z"
-                                             }
-                                         ],
-                         "sub_features":  [
-                                              {
-                                                  "id":  "19a",
-                                                  "created_at":  "2026-06-04T18:27:56-05:00",
-                                                  "title":  "JUCE project scaffolding + CMake build",
-                                                  "transitions":  [
-                                                                      {
-                                                                          "from":  "pending",
-                                                                          "to":  "done",
-                                                                          "at":  "2026-06-04T18:44:10.3085837Z"
-                                                                      }
-                                                                  ],
-                                                  "name":  "juce_project_scaffold",
-                                                  "description":  "Create CMakeLists.txt, .gitmodules (JUCE 8.x), directory structure (Source/Audio, Source/DSP, Source/UI), CMakePresets.json, .gitignore. Build with VS 2022. Verify empty app compiles.",
-                                                  "status":  "done",
-                                                  "stack":  "fullstack"
-                                              },
-                                              {
-                                                  "id":  "19b",
-                                                  "created_at":  "2026-06-04T18:27:56-05:00",
-                                                  "title":  "WASAPI loopback capture nativo (Win32)",
-                                                  "transitions":  [
-                                                                      {
-                                                                          "from":  "in_progress",
-                                                                          "to":  "done",
-                                                                          "at":  "2026-06-05T01:08:49.0170114Z"
-                                                                      }
-                                                                  ],
-                                                  "name":  "wasapi_loopback_native",
-                                                  "description":  "Implement raw Win32 WASAPI loopback capture thread (IMMDeviceEnumerator, IAudioClient with AUDCLNT_STREAMFLAGS_LOOPBACK, IAudioCaptureClient). Lock-free ring buffer via JUCE AbstractFifo para comunicar con pipeline de audio.",
-                                                  "status":  "done",
-                                                  "stack":  "fullstack"
-                                              },
-                                              {
-                                                  "id":  "19c",
-                                                  "created_at":  "2026-06-04T18:27:56-05:00",
-                                                  "title":  "HRTF engine C++ port",
-                                                  "transitions":  [
-                                                                      {
-                                                                          "from":  "pending",
-                                                                          "to":  "in_progress",
-                                                                          "at":  "2026-06-04T19:00:00Z"
-                                                                      },
-                                                                      {
-                                                                          "from":  "in_progress",
-                                                                          "to":  "testing",
-                                                                          "at":  "2026-06-04T19:37:45.2956182Z"
-                                                                      },
-                                                                      {
-                                                                          "from":  "testing",
-                                                                          "to":  "done",
-                                                                          "at":  "2026-06-05T01:08:49.0310121Z"
-                                                                      }
-                                                                  ],
-                                                  "name":  "hrtf_engine_cpp",
-                                                  "description":  "Port HRTFDatabase y MonauralSpatialEncoder de Python a C++. Carga de archivos .sofa via libmysofa. dsp::Convolution para convolucion HRTF (zero-latency partitioned overlap-add). Cache LRU de filtros interpolados.",
-                                                  "status":  "done",
-                                                  "stack":  "fullstack"
-                                              },
-                                              {
-                                                  "id":  "19e",
-                                                  "created_at":  "2026-06-04T00:00:00Z",
-                                                  "title":  "System tray config window with parameter controls",
-                                                  "transitions":  [
-                                                                      {
-                                                                          "from":  "pending",
-                                                                          "to":  "in_progress",
-                                                                          "at":  "2026-06-04T19:00:00Z"
-                                                                      },
-                                                                      {
-                                                                          "from":  "in_progress",
-                                                                          "to":  "done",
-                                                                          "at":  "2026-06-05T01:08:49.0390113Z"
-                                                                      }
-                                                                  ],
-                                                  "name":  "config_window_params",
-                                                  "description":  "Create proper config window accessible from tray icon, with sliders/selectors to control spatial audio parameters and device routing at runtime. Parameters become atomic for thread-safe updates.",
-                                                  "status":  "done",
-                                                  "stack":  "fullstack"
-                                              }
-                                          ]
-                     },
-                     {
-                         "id":  20,
-                         "name":  "ear_selection_ui",
-                         "title":  "Selector de oido funcional (izquierdo/derecho) en config window",
-                         "description":  "Agregar combo/dropdown en MainComponent para seleccionar el oido por el que se escucha. Rafael es sordo del oido izquierdo, escucha por el derecho.",
-                         "stack":  "fullstack",
-                         "acceptance":  [
-                                            "Selector Left/Right en config window",
-                                            "Aplica ear param via setParam(\u0027ear\u0027, ...)",
-                                            "Default: right (para Rafael)"
-                                        ],
-                         "status":  "done",
-                         "created_at":  "2026-06-05T01:40:57.5622558Z",
-                         "transitions":  [
-                                             {
-                                                 "from":  "pending",
-                                                 "to":  "done",
-                                                 "at":  "2026-06-05T01:43:03.6169142Z"
-                                             }
-                                         ]
-                     },
-                     {
-                         "id":  21,
-                         "name":  "show_ui_on_startup",
-                         "title":  "Mostrar config window al iniciar la app (no oculta en segundo plano)",
-                         "description":  "Al ejecutar Rafear.exe, la ventana de configuracion debe mostrarse inmediatamente en lugar de quedar oculta en la bandeja del sistema.",
-                         "stack":  "fullstack",
-                         "acceptance":  [
-                                            "Ventana de configuracion visible al iniciar",
-                                            "Icono de bandeja sigue presente",
-                                            "Cerrar ventana la oculta (no cierra la app)"
-                                        ],
-                         "status":  "done",
-                         "created_at":  "2026-06-05T01:40:57.5622558Z",
-                         "transitions":  [
-                                             {
-                                                 "from":  "pending",
-                                                 "to":  "done",
-                                                 "at":  "2026-06-05T01:44:50.5733332Z"
-                                             }
-                                         ]
-                     },
-                     {
-                         "id":  22,
-                         "name":  "ui_redesign_notion",
-                         "title":  "Rediseno UI tipo Notion con frontend-design skill",
-                         "description":  "Redisenar la interfaz de Rafear (MainComponent) siguiendo el front_design_prompt.txt completado. Estilo visual tipo Notion: minimalista, limpio, tipografia refinada, colores sutiles.",
-                         "stack":  "fullstack",
-                         "acceptance":  [
-                                            "MainComponent redisenado siguiendo el design spec",
-                                            "Estilo visual tipo Notion (limpio, minimalista, tipografia refinada)",
-                                            "Sliders y selectores con estilo moderno",
-                                            "Iconografia coherente",
-                                            "Build exitoso"
-                                        ],
-                         "status":  "done",
-                         "created_at":  "2026-06-05T01:47:29.9759875Z",
-                         "transitions":  [
-                                             {
-                                                 "from":  "pending",
-                                                 "to":  "in_progress",
-                                                 "at":  "2026-06-05T02:00:00Z"
-                                             },
-                                             {
-                                                 "from":  "in_progress",
-                                                 "to":  "testing",
-                                                 "at":  "2026-06-05T02:05:30.3772906Z"
-                                             },
-                                             {
-                                                 "from":  "testing",
-                                                 "to":  "in_progress",
-                                                 "at":  "2026-06-05T02:11:23.9685102Z"
-                                             },
-                                             {
-                                                 "from":  "in_progress",
-                                                 "to":  "testing",
-                                                 "at":  "2026-06-05T02:18:43.0034878Z"
-                                             },
-                                             {
-                                                 "from":  "testing",
-                                                 "to":  "in_progress",
-                                                 "at":  "2026-06-05T02:22:42.6450300Z"
-                                             },
-                                             {
-                                                 "from":  "in_progress",
-                                                 "to":  "testing",
-                                                 "at":  "2026-06-05T02:27:37.3641253Z"
-                                             },
-                                             {
-                                                 "from":  "testing",
-                                                 "to":  "in_progress",
-                                                 "at":  "2026-06-05T02:30:09.4032882Z"
-                                             },
-                                             {
-                                                 "from":  "in_progress",
-                                                 "to":  "done",
-                                                 "at":  "2026-06-09T00:09:49.408867Z"
-                                             }
-                                         ],
-                         "sub_features":  [
-                                              {
-                                                  "id":  "22a",
-                                                  "created_at":  "2026-06-05T02:11:23.9685102Z",
-                                                  "title":  "Custom ComboBox dark styling via LookAndFeel",
-                                                  "name":  "custom_dropdown_styling",
-                                                  "description":  "Override RafearLookAndFeel.drawComboBox() to render dropdowns with dark Notion theme: #252525 background, #e0e0e0 text, #3a3a3a border, #6b7280 arrow. Make the popup menu also dark.",
-                                                  "status":  "done",
-                                                  "stack":  "fullstack",
-                                                  "acceptance":  [
-                                                                     "ComboBox background #252525",
-                                                                     "ComboBox text #e0e0e0",
-                                                                     "ComboBox border #3a3a3a",
-                                                                     "Arrow color #6b7280",
-                                                                     "Popup menu also dark themed",
-                                                                     "Build succeeds"
-                                                                 ]
-                                              },
-                                              {
-                                                  "id":  "22b",
-                                                  "created_at":  "2026-06-05T02:11:23.9685102Z",
-                                                  "title":  "Mover Start/Stop button a esquina inferior derecha",
-                                                  "name":  "move_start_button_bottom_right",
-                                                  "description":  "Move the Start/Stop pill button from under the device dropdowns to the bottom-right of the window, near the status bar area. Below the processing section.",
-                                                  "status":  "done",
-                                                  "stack":  "fullstack",
-                                                  "acceptance":  [
-                                                                     "Start/Stop button in bottom-right of window",
-                                                                     "Not overlapping with status indicator",
-                                                                     "Clean spacing from processing section",
-                                                                     "Build succeeds"
-                                                                 ]
-                                              },
-                                              {
-                                                  "id":  "22c",
-                                                  "created_at":  "2026-06-05T02:11:23.9685102Z",
-                                                  "title":  "Status animado junto al titulo con animacion de pulso",
-                                                  "name":  "animated_status_animation",
-                                                  "description":  "Move the status dot + \u0027Running\u0027/\u0027Idle\u0027 text to the right of the \u0027Rafear\u0027 title in the title bar. Add a subtle pulse animation on the dot when audio is active (running). Use JUCE Timer to animate opacity or scale of the dot.",
-                                                  "status":  "done",
-                                                  "stack":  "fullstack",
-                                                  "acceptance":  [
-                                                                     "Status dot + label positioned right of title \u0027Rafear\u0027",
-                                                                     "Pulse animation on dot when running (opacity oscillation via Timer)",
-                                                                     "No animation when idle/stopped",
-                                                                     "Build succeeds"
-                                                                 ]
-                                              },
-                                              {
-                                                  "id":  "22d",
-                                                  "created_at":  "2026-06-05T02:22:42.6450300Z",
-                                                  "title":  "Correcciones feedback UI: dropdown, alineacion, animacion, espaciado",
-                                                  "name":  "ui_feedback_fixes",
-                                                  "description":  "Fix 5 issues: (1) simpler dropdown arrow, (2) remove superimposed text in ComboBox, (3) vertical center status dot+label, (4) increase timer rate for visible animation, (5) fix ear/bottom separator overlap.",
-                                                  "status":  "done",
-                                                  "stack":  "fullstack",
-                                                  "acceptance":  [
-                                                                     "Dropdown arrow: simple triangle, no path complexity",
-                                                                     "No superimposed text in ComboBox (drawComboBox doesnt draw text, only bg+border+arrow)",
-                                                                     "Status dot + label vertically centered relative to title",
-                                                                     "Animation visible (timer rate \u003e= 20Hz for smooth pulse)",
-                                                                     "Ear dropdown not overlapping with bottom separator",
-                                                                     "Build succeeds"
-                                                                 ],
-                                                  "transitions":  [
-                                                                      {
-                                                                          "from":  "pending",
-                                                                          "to":  "in_progress",
-                                                                          "at":  "2026-06-05T02:24:30.203496+00:00"
-                                                                      }
-                                                                  ]
-                                              },
-                                              {
-                                                  "id":  "22e",
-                                                  "created_at":  "2026-06-05T02:30:09.4032882Z",
-                                                  "title":  "Corregir fondo blanco del popup dropdown + lineas blancas en bordes",
-                                                  "name":  "fix_dropdown_popup_background",
-                                                  "description":  "Override drawPopupMenuBackground in RafearLookAndFeel to fill dark (#252525). Remove white background and white border lines showing at top/bottom of dropdown popup.",
-                                                  "status":  "done",
-                                                  "stack":  "fullstack",
-                                                  "acceptance":  [
-                                                                     "Popup menu background dark (#252525), not white",
-                                                                     "No white lines at top/bottom edges of dropdown popup",
-                                                                     "Dropdown items visible and selectable",
-                                                                     "Build succeeds"
-                                                                 ],
-                                                  "transitions":  [
-                                                                      {
-                                                                          "from":  "pending",
-                                                                          "to":  "in_progress",
-                                                                          "at":  "2026-06-08T22:52:07.689073Z"
-                                                                      },
-                                                                      {
-                                                                          "from":  "in_progress",
-                                                                          "to":  "testing",
-                                                                          "at":  "2026-06-08T22:59:29.704468Z"
-                                                                      },
-                                                                      {
-                                                                          "from":  "testing",
-                                                                          "to":  "done",
-                                                                          "at":  "2026-06-08T23:54:48.893254Z"
-                                                                      }
-                                                                  ]
-                                              }
-                                          ]
-                     },
-                     {
-                         "id":  23,
-                         "name":  "fix_audio_loop",
-                         "title":  "Eliminar bucle infinito de audio ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â salida en dispositivo diferente al capturado",
-                         "description":  "Actualmente WASAPI loopback captura el default render y reproduce en el mismo dispositivo = feedback infinito. Solucion: el output device debe ser DIFERENTE al dispositivo capturado. El usuario selecciona el output (headset) en la UI. Se verifica que input != output antes de arrancar.",
-                         "stack":  "fullstack",
-                         "acceptance":  [
-                                            "Selector de output device en UI cambia realmente el dispositivo de salida",
-                                            "Selector de input muestra \u0027System Loopback (WASAPI)\u0027 como unica opcion",
-                                            "Verificacion: si input == output, mostrar warning y no arrancar",
-                                            "Al presionar Start, Rafear captura del default render y reproduce en el output seleccionado",
-                                            "Sin bucle infinito cuando input != output"
-                                        ],
-                         "status":  "done",
-                         "created_at":  "2026-06-05T01:49:18.0551562Z",
-                         "transitions":  [
-                                             {
-                                                 "from":  "pending",
-                                                 "to":  "in_progress",
-                                                 "at":  "2026-06-08T23:59:00Z"
-                                             },
-                                             {
-                                                 "from":  "pending",
-                                                 "to":  "in_progress",
-                                                 "at":  "2026-06-09T00:07:53.679687Z"
-                                             },
-                                             {
-                                                 "from":  "in_progress",
-                                                 "to":  "testing",
-                                                 "at":  "2026-06-09T00:10:34.872124Z"
-                                             },
-                                             {
-                                                 "from":  "testing",
-                                                 "to":  "done",
-                                                 "at":  "2026-06-09T00:22:22.3129627Z"
-                                             }
-                                         ]
-                     },
-                     {
-                         "acceptance":  [
-                                            "Slider values set antes de Start se aplican correctamente al arrancar",
-                                            "Ear selector set antes de Start se aplica correctamente",
-                                            "Cambiar sliders mientras audio corre se refleja inmediatamente (atomic store/load)",
-                                            "Cambiar ear mientras audio corre se refleja inmediatamente",
-                                            "No regresiones en build, mute, device selection"
-                                        ],
-                         "transitions":  [
-                                             {
-                                                 "from":  "pending",
-                                                 "to":  "in_progress",
-                                                 "at":  "2026-06-09T00:33:45.4238783Z"
-                                             },
-                                             {
-                                                 "from":  "in_progress",
-                                                 "to":  "testing",
-                                                 "at":  "2026-06-09T00:38:34.7969228Z"
-                                             },
-                                             {
-                                                 "from":  "testing",
-                                                 "to":  "done",
-                                                 "at":  "2026-06-09T01:25:06.3189728Z"
-                                             }
-                                         ],
-                         "id":  24,
-                         "description":  "AudioPipeline::audioDeviceAboutToStart() llama spatialProcessor-\u003eprepare() con valores hardcodeados, sobreescribiendo los params que el usuario haya cambiado antes de Start. Fix: onParamSliderChange() debe llamarse DESPUÃ‰S de que el audio arranque, no antes.",
-                         "created_at":  "2026-06-09T00:33:11.3923095Z",
-                         "name":  "fix_realtime_params",
-                         "stack":  "fullstack",
-                         "status":  "done",
-                         "title":  "Arreglar params en tiempo real â€” slider + ear no se aplican al start ni durante ejecuciÃ³n"
-                     }
-                 ]
+{
+    "project": "MonoSpatial",
+    "description": "Audio 3D monoaural para gaming y accesibilidad. Permite a personas con audiciÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â³n de un solo lado percibir direcciÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â³n espacial en videojuegos mediante filtros HRTF.",
+    "rules": {
+        "one_feature_at_a_time": true,
+        "require_tests_to_close": true,
+        "valid_status": [
+            "pending",
+            "in_progress",
+            "testing",
+            "done",
+            "blocked"
+        ]
+    },
+    "features": [
+        {
+            "id": 1,
+            "name": "setup_project",
+            "title": "ConfiguraciÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â³n inicial del proyecto",
+            "description": "Bootstrap del proyecto MonoSpatial: personalizar docs, scripts/verify_env.py y estructura base para el stack Python DSP.",
+            "stack": "python",
+            "acceptance": [
+                "docs/architecture.md describe la arquitectura de audio 3D monoaural (no texto genÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â©rico)",
+                "docs/conventions.md define convenciones para Python DSP (naming de seÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â±ales, latencia, performance)",
+                "scripts/verify_env.py verifica numpy, scipy, sounddevice, soundfile, PyQt6",
+                "python scripts/check_harness.py termina sin errores",
+                "src/ contiene los planos de arquitectura y cÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â³digo como documentaciÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â³n"
+            ],
+            "status": "done",
+            "created_at": "2026-05-31T00:00:00Z",
+            "transitions": [
+                {
+                    "from": "pending",
+                    "to": "done",
+                    "at": "2026-05-31T00:00:00Z"
+                }
+            ]
+        },
+        {
+            "id": 2,
+            "name": "hrtf_engine",
+            "title": "HRTF Engine ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â carga de bases de datos .sofa y codificaciÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â³n espacial monoaural",
+            "description": "Implementar HRTFDatabase (carga de archivos .sofa vÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â­a libmysofa, interpolaciÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â³n azimuth/elevation, cachÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â© de filtros) y MonauralSpatialEncoder (convoluciÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â³n HRTF, spectral elevation cues, front-back cues, distance gain, mezcla de fuentes).",
+            "stack": "python",
+            "acceptance": [
+                "HRTFDatabase carga un archivo .sofa y extrae filtros por azimuth/elevation",
+                "HRTFDatabase cachea filtros para evitar recarga en mismos ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¡ngulos",
+                "MonauralSpatialEncoder.encode_source aplica convoluciÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â³n + elevation cues + front-back cues + distance gain",
+                "MonauralSpatialEncoder.mix_sources mezcla mÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Âºltiples fuentes con normalizaciÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â³n antirrecorte",
+                "Todos los parÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¡metros de entrada tienen validaciÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â³n de rango (azimuth ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â±180, elevation ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â±90, distance > 0)",
+                "Type hints en todas las funciones pÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Âºblicas",
+                "Tests unitarios para cada mÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â©todo"
+            ],
+            "status": "done",
+            "created_at": "2026-05-31T00:00:00Z",
+            "transitions": [
+                {
+                    "from": "pending",
+                    "to": "done",
+                    "at": "2026-06-01T01:56:10Z"
+                }
+            ]
+        },
+        {
+            "id": 3,
+            "name": "optimized_convolver",
+            "title": "ConvoluciÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â³n optimizada ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â Overlap-Save FFT",
+            "description": "Implementar OverlapSaveConvolver con FFT precomputada para latencia mÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â­nima. Soporta IR de longitud arbitraria y procesamiento por bloques.",
+            "stack": "python",
+            "acceptance": [
+                "OverlapSaveConvolver procesa bloques de audio con overlap-save (FFT)",
+                "FFT del IR se precomputa una vez en __init__",
+                "El estado overlap se mantiene entre llamadas a process()",
+                "Soporta IR de cualquier longitud (no solo potencia de 2)",
+                "El output tiene la misma longitud que el input block",
+                "Rendimiento: block_size=512 procesa en < 11ms",
+                "Tests unitarios con IR sintÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â©tica vs fftconvolve de scipy como referencia"
+            ],
+            "status": "done",
+            "created_at": "2026-05-31T00:00:00Z",
+            "transitions": [
+                {
+                    "from": "pending",
+                    "to": "done",
+                    "at": "2026-06-01T01:56:10Z"
+                }
+            ]
+        },
+        {
+            "id": 4,
+            "name": "offline_test",
+            "title": "Test offline ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â validaciÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â³n con archivos WAV",
+            "description": "Implementar script test_offline.py que toma un archivo WAV estÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â©reo, aplica codificaciÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â³n espacial monoaural y escribe el resultado como WAV mono.",
+            "stack": "python",
+            "acceptance": [
+                "test_offline.py lee un archivo WAV estÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â©reo con soundfile",
+                "Separa canal izquierdo y derecho como fuentes espaciales separadas",
+                "Aplica MonauralSpatialEncoder a cada fuente con azimuths opuestos (ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â±30ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â°)",
+                "Mezcla las fuentes en una sola salida mono",
+                "Escribe el resultado como WAV mono de 16-bit",
+                "Maneja errores de archivo inexistente o formato no soportado",
+                "Se puede ejecutar como script: python src/test_offline.py <input> <output>"
+            ],
+            "status": "done",
+            "created_at": "2026-05-31T00:00:00Z",
+            "transitions": [
+                {
+                    "from": "pending",
+                    "to": "done",
+                    "at": "2026-06-01T01:56:10Z"
+                }
+            ]
+        },
+        {
+            "id": 5,
+            "name": "realtime_processor",
+            "title": "Procesamiento en tiempo real ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â captura y procesamiento de audio vivo",
+            "description": "Implementar realtime_processor.py que captura audio del sistema via sounddevice, procesa por bloques de 512 samples (~10.6ms) y envÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â­a salida monoaural procesada al auricular.",
+            "stack": "python",
+            "acceptance": [
+                "Lista dispositivos de audio disponibles con sd.query_devices()",
+                "Callback process_block procesa entrada estÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â©reo en bloques de 512 frames",
+                "Latencia de procesamiento < 11ms con block_size=512 a 48kHz",
+                "Maneja status de stream (reporta errores sin crashear)",
+                "Se puede detener con Ctrl+C limpiamente",
+                "Usa HRTFDatabase y MonauralSpatialEncoder del mÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â³dulo hrtf_engine",
+                "DocumentaciÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â³n de configuraciÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â³n: selecciÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â³n de dispositivo input/output"
+            ],
+            "status": "done",
+            "created_at": "2026-05-31T00:00:00Z",
+            "transitions": [
+                {
+                    "from": "pending",
+                    "to": "done",
+                    "at": "2026-06-01T01:56:10Z"
+                }
+            ]
+        },
+        {
+            "id": 6,
+            "name": "calibration_ui",
+            "title": "App de calibraciÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â³n ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â interfaz PyQt6 para ajuste de parÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¡metros HRTF",
+            "description": "Implementar calibration_ui.py con PyQt6: selector de oÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â­do funcional, sliders de intensidad HRTF y reverb trasero, test de discriminaciÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â³n front/back con feedback inmediato.",
+            "stack": "python",
+            "acceptance": [
+                "Ventana PyQt6 se abre sin errores",
+                "Slider de intensidad HRTF (0-100%) ajusta el gain del filtro HRTF",
+                "Slider de reverb trasero (0-100%) ajusta el nivel de front-back cue",
+                "BotÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â³n 'Reproducir sonido de prueba' genera ruido y lo reproduce en ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¡ngulo aleatorio (0ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â° o 180ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â°)",
+                "Botones 'Adelante'/'AtrÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¡s' permiten al usuario responder la direcciÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â³n percibida",
+                "Label muestra feedback inmediato (correcto/incorrecto)",
+                "Se lanza como script: python src/calibration_ui.py"
+            ],
+            "status": "done",
+            "created_at": "2026-05-31T00:00:00Z",
+            "transitions": [
+                {
+                    "from": "pending",
+                    "to": "done",
+                    "at": "2026-06-01T01:56:10Z"
+                }
+            ]
+        },
+        {
+            "id": 7,
+            "name": "ear_flag_test_offline",
+            "title": "Flag --ear para test_offline.py (seleccion de oido funcional)",
+            "description": "Agregar flag --ear left|right a test_offline.py para seleccionar el oido funcional. El script procesa el WAV aplicando HRTF al oido seleccionado.",
+            "stack": "python",
+            "acceptance": [
+                "test_offline.py acepta --ear left|right",
+                "Default es left (compatibilidad hacia atras)",
+                "Con --ear right, el procesamiento espacial se optimiza para oido derecho",
+                "Todos los tests existentes pasan"
+            ],
+            "status": "done",
+            "created_at": "2026-05-31T00:00:00Z",
+            "transitions": [
+                {
+                    "from": "pending",
+                    "to": "in_progress",
+                    "at": "2026-05-31T00:00:00Z"
+                },
+                {
+                    "from": "in_progress",
+                    "to": "done",
+                    "at": "2026-05-31T00:00:00Z"
+                }
+            ]
+        },
+        {
+            "id": 8,
+            "name": "realtime_perf_optimization",
+            "title": "Optimizar realtime_processor.py con OverlapSaveConvolver para eliminar buffer underruns",
+            "description": "Reemplazar fftconvolve (scipy) en realtime_processor._process_block por OverlapSaveConvolver (precomputado). Reduce tiempo de procesamiento por bloque, elimina interferencia por buffer underrun a block_size=512.",
+            "stack": "python",
+            "acceptance": [
+                "OverlapSaveConvolver creado en __init__ con IR precomputado para cada canal",
+                "_process_block usa .process() en vez de encode_source() con fftconvolve",
+                "Block-size 512 funciona sin interferencia audible",
+                "Todos los tests existentes pasan",
+                "No rompe la API pÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Âºblica de RealtimeProcessor"
+            ],
+            "status": "done",
+            "created_at": "2026-05-31T00:00:00Z",
+            "transitions": [
+                {
+                    "from": "pending",
+                    "to": "in_progress",
+                    "at": "2026-05-31T00:00:00Z"
+                },
+                {
+                    "from": "in_progress",
+                    "to": "done",
+                    "at": "2026-05-31T00:00:00Z"
+                }
+            ]
+        },
+        {
+            "id": 9,
+            "name": "natural_spatial_audio",
+            "title": "Audio espacial natural con head shadow + paneo (sin coloracion HRTF)",
+            "description": "Reemplazar el HRTF sintetico (filtro pasa-banda que suena a caja) por un modelo de head shadow: canal izquierdo passthrough, canal derecho filtro lowpass a ~4kHz (simula bloqueo de la cabeza), paneo para centrar. Audio transparente sin coloracion.",
+            "stack": "python",
+            "acceptance": [
+                "Canal izquierdo suena natural, sin filtrado",
+                "Canal derecho tiene lowpass suave (~4kHz, head shadow)",
+                "Mezcla mono con anti-clip normalisation",
+                "No suena a caja/banera",
+                "Block-size 512 funciona sin buffer underrun",
+                "Todos los tests existentes pasan"
+            ],
+            "status": "done",
+            "created_at": "2026-05-31T00:00:00Z",
+            "transitions": [
+                {
+                    "from": "pending",
+                    "to": "in_progress",
+                    "at": "2026-05-31T00:00:00Z"
+                },
+                {
+                    "from": "in_progress",
+                    "to": "done",
+                    "at": "2026-06-01T01:56:10Z"
+                }
+            ]
+        },
+        {
+            "id": 10,
+            "name": "front_back_cues",
+            "title": "Discriminacion frontal/trasera ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â notches espectrales + delay para sonidos detras",
+            "description": "Agregar senales front/back al pipeline de head shadow. Para sonidos detras (azimuth > 90 o < -90): notch filter ~8kHz (pinna shadow) + delay ~12ms + atenuacion (-12dB). Para sonidos adelante: leave limpio o boost sutil. Independiente del eje L/R.",
+            "stack": "python",
+            "acceptance": [
+                "Sonidos frontales suenan sin coloracion artificial",
+                "Sonidos traseros tienen notch ~8kHz + delay perceptible",
+                "Funciona combinado con head shadow (L/R)",
+                "Block-size 512 sin buffer underrun",
+                "Todos los tests existentes pasan"
+            ],
+            "status": "done",
+            "created_at": "2026-05-31T00:00:00Z",
+            "transitions": [
+                {
+                    "from": "pending",
+                    "to": "done",
+                    "at": "2026-06-01T01:56:10Z"
+                }
+            ]
+        },
+        {
+            "id": 11,
+            "name": "elevation_cues",
+            "title": "Discriminacion de elevacion (arriba/abajo) ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â filtros espectrales segun elevacion",
+            "description": "Agregar senales de elevacion al pipeline. Para sonidos arriba (>20 deg): boost 7.5-10.5kHz (simula reflexion del pabellon). Para sonidos abajo (<-20 deg): cut 3.5-6.5kHz. Basado en el codigo existente de MonauralSpatialEncoder.apply_spectral_elevation_cue pero integrado en el nuevo pipeline de head shadow.",
+            "stack": "python",
+            "acceptance": [
+                "Sonidos sobre la cabeza tienen boost en 7.5-10.5kHz",
+                "Sonidos bajo la cabeza tienen cut en 3.5-6.5kHz",
+                "Funciona en combinacion con head shadow + front/back",
+                "Block-size 512 sin buffer underrun",
+                "Todos los tests existentes pasan"
+            ],
+            "status": "done",
+            "created_at": "2026-05-31T00:00:00Z",
+            "transitions": [
+                {
+                    "from": "pending",
+                    "to": "in_progress",
+                    "at": "2026-06-01T01:38:52Z"
+                },
+                {
+                    "from": "in_progress",
+                    "to": "testing",
+                    "at": "2026-06-01T01:46:26Z"
+                },
+                {
+                    "from": "testing",
+                    "to": "done",
+                    "at": "2026-06-01T01:51:37Z"
+                }
+            ]
+        },
+        {
+            "id": 12,
+            "name": "hrtf_axis_control",
+            "title": "Control de intensidad por eje espacial (HRTF intensity sliders)",
+            "description": "Agregar parametros independientes para controlar la intensidad de cada eje espacial: --lr-intensity (0-100%), --fb-intensity (0-100%), --ud-intensity (0-100%). Permite al usuario calibrar que tan fuerte es cada senal espacial segun su percepcion. Los valores default deben sonar naturales.",
+            "stack": "python",
+            "acceptance": [
+                "--lr-intensity controla que tan fuerte es el head shadow (0-100%)",
+                "--fb-intensity controla el notch trasero (0-100%, 0=desactivado)",
+                "--ud-intensity controla el boost/cut de elevacion (0-100%, 0=desactivado)",
+                "Default para cada eje suena natural",
+                "Funciona en realtime_processor y test_offline",
+                "Block-size 512 sin buffer underrun",
+                "Todos los tests existentes pasan"
+            ],
+            "status": "done",
+            "created_at": "2026-05-31T00:00:00Z",
+            "transitions": [
+                {
+                    "from": "pending",
+                    "to": "in_progress",
+                    "at": "2026-06-01T01:56:16Z"
+                },
+                {
+                    "from": "in_progress",
+                    "to": "testing",
+                    "at": "2026-06-01T02:01:49Z"
+                },
+                {
+                    "from": "testing",
+                    "to": "done",
+                    "at": "2026-06-01T02:08:38Z"
+                }
+            ]
+        },
+        {
+            "id": 13,
+            "name": "presence_boost",
+            "title": "Presence boost ~3-5kHz para claridad de voces y detalles",
+            "description": "Bandpass 3-5kHz mezclado sutilmente al canal ipsolateral. Mejora nitidez de voces, pasos y detalles agudos en gaming. Flag --clarity (0.0-1.0, default 0.0=off).",
+            "stack": "python",
+            "acceptance": [
+                "Canal ipsolateral recibe boost sutil en 3-5kHz",
+                "Flag --clarity 0.0-1.0 (default 0.0=off)",
+                "No afecta canal contralateral ni latencia",
+                "Block-size 512 sin buffer underrun",
+                "Todos los tests existentes pasan"
+            ],
+            "status": "done",
+            "created_at": "2026-06-01T02:53:48Z",
+            "transitions": [
+                {
+                    "from": "pending",
+                    "to": "in_progress",
+                    "at": "2026-06-01T03:10:25Z"
+                },
+                {
+                    "from": "in_progress",
+                    "to": "testing",
+                    "at": "2026-06-01T03:14:23Z"
+                },
+                {
+                    "from": "testing",
+                    "to": "done",
+                    "at": "2026-06-01T03:48:55Z"
+                }
+            ]
+        },
+        {
+            "id": 14,
+            "name": "high_shelf_boost",
+            "title": "High-shelf >2kHz para brillo general",
+            "description": "High-shelf filter a 2kHz para dar brillo al canal ipsolateral. Complementa presence boost. Flag --brillo (0.0-1.0, default 0.0=off).",
+            "stack": "python",
+            "acceptance": [
+                "High-shelf a 2kHz aplicado al canal ipsolateral",
+                "Flag --brillo 0.0-1.0 (default 0.0=off)",
+                "No afecta canal contralateral ni latencia",
+                "Block-size 512 sin buffer underrun",
+                "Todos los tests existentes pasan"
+            ],
+            "status": "done",
+            "created_at": "2026-06-01T02:53:48Z",
+            "transitions": [
+                {
+                    "from": "pending",
+                    "to": "in_progress",
+                    "at": "2026-06-01T03:54:50Z"
+                },
+                {
+                    "from": "testing",
+                    "to": "done",
+                    "at": "2026-06-01T04:33:07Z"
+                }
+            ]
+        },
+        {
+            "id": 15,
+            "name": "low_cut_filter",
+            "title": "Low-cut ~80Hz para eliminar rumble de bajos",
+            "description": "Highpass a 80Hz para eliminar ruido de subsuelo, motores, viento. Comun en headsets gaming para limpiar la senal. Flag --low-cut (0.0-1.0, default 0.0=off, 1.0=filtro completo).",
+            "stack": "python",
+            "acceptance": [
+                "Highpass 80Hz elimina frecuencias sub-sonoras",
+                "Flag --low-cut 0.0-1.0 (default 0.0=off)",
+                "Aplicado al mix completo (post-sum)",
+                "Block-size 512 sin buffer underrun",
+                "Todos los tests existentes pasan"
+            ],
+            "status": "done",
+            "created_at": "2026-06-01T02:53:48Z",
+            "transitions": [
+                {
+                    "from": "pending",
+                    "to": "in_progress",
+                    "at": "2026-06-01T04:41:12Z"
+                },
+                {
+                    "from": "testing",
+                    "to": "done",
+                    "at": "2026-06-01T04:54:33Z"
+                }
+            ]
+        },
+        {
+            "id": 16,
+            "name": "soft_compressor",
+            "title": "Compresor suave para emparejar volumen entre sonidos",
+            "description": "Compresor de crest factor suave. Reduce picos fuertes y sube pasajes suaves. Mejora audibilidad en gaming sin distorsion. Flag --compress (0.0-1.0, default 0.0=off).",
+            "stack": "python",
+            "acceptance": [
+                "Compresion suave reduce crest factor sin distorsion",
+                "Flag --compress 0.0-1.0 (default 0.0=off)",
+                "Aplicado al mix completo antes de anti-clip",
+                "Block-size 512 sin buffer underrun",
+                "Todos los tests existentes pasan"
+            ],
+            "status": "done",
+            "created_at": "2026-06-01T02:53:48Z",
+            "transitions": [
+                {
+                    "from": "pending",
+                    "to": "in_progress",
+                    "at": "2026-06-01T04:55:34Z"
+                },
+                {
+                    "from": "testing",
+                    "to": "done",
+                    "at": "2026-06-01T05:09:57Z"
+                }
+            ]
+        },
+        {
+            "id": 17,
+            "name": "wasapi_loopback",
+            "title": "WASAPI loopback nativo vÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â­a Windows API (comtypes)",
+            "description": "Reemplazar CABLE Input por WASAPI loopback nativo de Windows usando comtypes/Windows API directa. Captura el mix de audio del sistema a travÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â©s de IAudioClient con AUDCLNT_STREAMFLAGS_LOOPBACK. Auto-detecta el dispositivo de salida por defecto. Elimina dependencia de CABLE y de sounddevice para captura.",
+            "stack": "python",
+            "acceptance": [
+                "Captura audio del sistema via WASAPI loopback con comtypes (IAudioClient/IAudioCaptureClient)",
+                "Auto-detecta dispositivo de salida por defecto con IMMDeviceEnumerator",
+                "Procesa y envÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â­a al headset via sounddevice (solo playback)",
+                "Latencia menor o igual que con CABLE",
+                "Funciona sin CABLE instalado",
+                "Funciona con cualquier dispositivo de salida (USB, HDMI, analÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â³gico)",
+                "Block-size 512 sin buffer underrun",
+                "Todos los tests existentes pasan"
+            ],
+            "status": "done",
+            "created_at": "2026-06-01T02:53:48Z",
+            "transitions": [
+                {
+                    "from": "pending",
+                    "to": "in_progress",
+                    "at": "2026-06-01T19:20:00Z"
+                },
+                {
+                    "from": "in_progress",
+                    "to": "testing",
+                    "at": "2026-06-01T19:35:00Z"
+                },
+                {
+                    "from": "testing",
+                    "to": "in_progress",
+                    "at": "2026-06-01T20:00:00Z"
+                },
+                {
+                    "from": "in_progress",
+                    "to": "testing",
+                    "at": "2026-06-02T01:08:33.898630+00:00"
+                },
+                {
+                    "from": "testing",
+                    "to": "done",
+                    "at": "2026-06-04T18:14:30.3870780Z"
+                },
+                {
+                    "from": "testing",
+                    "to": "done",
+                    "at": "2026-06-04T18:14:35.2138816Z"
+                }
+            ],
+            "tags": [
+                "mvp-pragmatic"
+            ],
+            "decision_reason": "WASAPI loopback en Python es fragil (varia entre versiones de Windows/drivers). Para el MVP Python, mantener CABLE+sounddevice es mas confiable. WASAPI loopback nativo se implementara en feature 19 (migracion C++/JUCE), donde JUCE tiene soporte WASAPI robusto."
+        },
+        {
+            "id": 18,
+            "name": "app_background",
+            "title": "App Python que corre en segundo plano (bandeja de sistema)",
+            "description": "Convertir Rafear en una app Python que se ejecuta en background con icono en bandeja de sistema. Sin terminal visible. Auto-detecta dispositivos CABLE + headset. Inicio automatico con Windows.",
+            "stack": "fullstack",
+            "acceptance": [
+                "App se ejecuta en background sin ventana de terminal",
+                "Icono en bandeja de sistema (system tray)",
+                "Auto-detecta CABLE Output y headset al iniciar",
+                "Inicio automatico con Windows (opcional)",
+                "Click derecho en icono: iniciar/detener/configurar/salir",
+                "Ventana de configuracion basica (flags)",
+                "Todos los tests existentes pasan"
+            ],
+            "status": "blocked",
+            "created_at": "2026-06-01T02:53:48Z",
+            "transitions": [
+                {
+                    "from": "pending",
+                    "to": "blocked",
+                    "at": "2026-06-04T18:24:27.2410774Z"
+                }
+            ],
+            "tags": [
+                "superseded-by-19"
+            ],
+            "decision_reason": "Se salta porque el MVP Python con system tray se reescribira en C++/JUCE (feature 19). JUCE tiene system tray nativo, auto-detect y mejor latencia."
+        },
+        {
+            "id": 19,
+            "name": "cpp_juce_migration",
+            "title": "Migracion a aplicacion nativa C++ con JUCE framework",
+            "description": "Reescribir el pipeline de procesamiento y la app en C++ usando JUCE framework. Aplicacion standalone instalable, menor latencia, sin dependencia de Python.",
+            "stack": "fullstack",
+            "acceptance": [
+                "Pipeline de procesamiento reescrito en C++ con JUCE",
+                "Latencia igual o menor que MVP Python",
+                "Instalador MSI o similar",
+                "Auto-deteccion de dispositivos",
+                "Funciona sin Python instalado",
+                "UI de configuracion basica",
+                "Resultados identicos al MVP Python (mismos filtros)"
+            ],
+            "status": "done",
+            "created_at": "2026-06-01T02:56:32Z",
+            "transitions": [
+                {
+                    "from": "pending",
+                    "to": "in_progress",
+                    "at": "2026-06-04T18:24:27.2500763Z"
+                },
+                {
+                    "from": "in_progress",
+                    "to": "done",
+                    "at": "2026-06-05T01:08:49Z"
+                }
+            ],
+            "sub_features": [
+                {
+                    "id": "19a",
+                    "created_at": "2026-06-04T18:27:56-05:00",
+                    "title": "JUCE project scaffolding + CMake build",
+                    "transitions": [
+                        {
+                            "from": "pending",
+                            "to": "done",
+                            "at": "2026-06-04T18:44:10.3085837Z"
+                        }
+                    ],
+                    "name": "juce_project_scaffold",
+                    "description": "Create CMakeLists.txt, .gitmodules (JUCE 8.x), directory structure (Source/Audio, Source/DSP, Source/UI), CMakePresets.json, .gitignore. Build with VS 2022. Verify empty app compiles.",
+                    "status": "done",
+                    "stack": "fullstack"
+                },
+                {
+                    "id": "19b",
+                    "created_at": "2026-06-04T18:27:56-05:00",
+                    "title": "WASAPI loopback capture nativo (Win32)",
+                    "transitions": [
+                        {
+                            "from": "in_progress",
+                            "to": "done",
+                            "at": "2026-06-05T01:08:49.0170114Z"
+                        }
+                    ],
+                    "name": "wasapi_loopback_native",
+                    "description": "Implement raw Win32 WASAPI loopback capture thread (IMMDeviceEnumerator, IAudioClient with AUDCLNT_STREAMFLAGS_LOOPBACK, IAudioCaptureClient). Lock-free ring buffer via JUCE AbstractFifo para comunicar con pipeline de audio.",
+                    "status": "done",
+                    "stack": "fullstack"
+                },
+                {
+                    "id": "19c",
+                    "created_at": "2026-06-04T18:27:56-05:00",
+                    "title": "HRTF engine C++ port",
+                    "transitions": [
+                        {
+                            "from": "pending",
+                            "to": "in_progress",
+                            "at": "2026-06-04T19:00:00Z"
+                        },
+                        {
+                            "from": "in_progress",
+                            "to": "testing",
+                            "at": "2026-06-04T19:37:45.2956182Z"
+                        },
+                        {
+                            "from": "testing",
+                            "to": "done",
+                            "at": "2026-06-05T01:08:49.0310121Z"
+                        }
+                    ],
+                    "name": "hrtf_engine_cpp",
+                    "description": "Port HRTFDatabase y MonauralSpatialEncoder de Python a C++. Carga de archivos .sofa via libmysofa. dsp::Convolution para convolucion HRTF (zero-latency partitioned overlap-add). Cache LRU de filtros interpolados.",
+                    "status": "done",
+                    "stack": "fullstack"
+                },
+                {
+                    "id": "19e",
+                    "created_at": "2026-06-04T00:00:00Z",
+                    "title": "System tray config window with parameter controls",
+                    "transitions": [
+                        {
+                            "from": "pending",
+                            "to": "in_progress",
+                            "at": "2026-06-04T19:00:00Z"
+                        },
+                        {
+                            "from": "in_progress",
+                            "to": "done",
+                            "at": "2026-06-05T01:08:49.0390113Z"
+                        }
+                    ],
+                    "name": "config_window_params",
+                    "description": "Create proper config window accessible from tray icon, with sliders/selectors to control spatial audio parameters and device routing at runtime. Parameters become atomic for thread-safe updates.",
+                    "status": "done",
+                    "stack": "fullstack"
+                }
+            ]
+        },
+        {
+            "id": 20,
+            "name": "ear_selection_ui",
+            "title": "Selector de oido funcional (izquierdo/derecho) en config window",
+            "description": "Agregar combo/dropdown en MainComponent para seleccionar el oido por el que se escucha. Rafael es sordo del oido izquierdo, escucha por el derecho.",
+            "stack": "fullstack",
+            "acceptance": [
+                "Selector Left/Right en config window",
+                "Aplica ear param via setParam('ear', ...)",
+                "Default: right (para Rafael)"
+            ],
+            "status": "done",
+            "created_at": "2026-06-05T01:40:57.5622558Z",
+            "transitions": [
+                {
+                    "from": "pending",
+                    "to": "done",
+                    "at": "2026-06-05T01:43:03.6169142Z"
+                }
+            ]
+        },
+        {
+            "id": 21,
+            "name": "show_ui_on_startup",
+            "title": "Mostrar config window al iniciar la app (no oculta en segundo plano)",
+            "description": "Al ejecutar Rafear.exe, la ventana de configuracion debe mostrarse inmediatamente en lugar de quedar oculta en la bandeja del sistema.",
+            "stack": "fullstack",
+            "acceptance": [
+                "Ventana de configuracion visible al iniciar",
+                "Icono de bandeja sigue presente",
+                "Cerrar ventana la oculta (no cierra la app)"
+            ],
+            "status": "done",
+            "created_at": "2026-06-05T01:40:57.5622558Z",
+            "transitions": [
+                {
+                    "from": "pending",
+                    "to": "done",
+                    "at": "2026-06-05T01:44:50.5733332Z"
+                }
+            ]
+        },
+        {
+            "id": 22,
+            "name": "ui_redesign_notion",
+            "title": "Rediseno UI tipo Notion con frontend-design skill",
+            "description": "Redisenar la interfaz de Rafear (MainComponent) siguiendo el front_design_prompt.txt completado. Estilo visual tipo Notion: minimalista, limpio, tipografia refinada, colores sutiles.",
+            "stack": "fullstack",
+            "acceptance": [
+                "MainComponent redisenado siguiendo el design spec",
+                "Estilo visual tipo Notion (limpio, minimalista, tipografia refinada)",
+                "Sliders y selectores con estilo moderno",
+                "Iconografia coherente",
+                "Build exitoso"
+            ],
+            "status": "done",
+            "created_at": "2026-06-05T01:47:29.9759875Z",
+            "transitions": [
+                {
+                    "from": "pending",
+                    "to": "in_progress",
+                    "at": "2026-06-05T02:00:00Z"
+                },
+                {
+                    "from": "in_progress",
+                    "to": "testing",
+                    "at": "2026-06-05T02:05:30.3772906Z"
+                },
+                {
+                    "from": "testing",
+                    "to": "in_progress",
+                    "at": "2026-06-05T02:11:23.9685102Z"
+                },
+                {
+                    "from": "in_progress",
+                    "to": "testing",
+                    "at": "2026-06-05T02:18:43.0034878Z"
+                },
+                {
+                    "from": "testing",
+                    "to": "in_progress",
+                    "at": "2026-06-05T02:22:42.6450300Z"
+                },
+                {
+                    "from": "in_progress",
+                    "to": "testing",
+                    "at": "2026-06-05T02:27:37.3641253Z"
+                },
+                {
+                    "from": "testing",
+                    "to": "in_progress",
+                    "at": "2026-06-05T02:30:09.4032882Z"
+                },
+                {
+                    "from": "in_progress",
+                    "to": "done",
+                    "at": "2026-06-09T00:09:49.408867Z"
+                }
+            ],
+            "sub_features": [
+                {
+                    "id": "22a",
+                    "created_at": "2026-06-05T02:11:23.9685102Z",
+                    "title": "Custom ComboBox dark styling via LookAndFeel",
+                    "name": "custom_dropdown_styling",
+                    "description": "Override RafearLookAndFeel.drawComboBox() to render dropdowns with dark Notion theme: #252525 background, #e0e0e0 text, #3a3a3a border, #6b7280 arrow. Make the popup menu also dark.",
+                    "status": "done",
+                    "stack": "fullstack",
+                    "acceptance": [
+                        "ComboBox background #252525",
+                        "ComboBox text #e0e0e0",
+                        "ComboBox border #3a3a3a",
+                        "Arrow color #6b7280",
+                        "Popup menu also dark themed",
+                        "Build succeeds"
+                    ]
+                },
+                {
+                    "id": "22b",
+                    "created_at": "2026-06-05T02:11:23.9685102Z",
+                    "title": "Mover Start/Stop button a esquina inferior derecha",
+                    "name": "move_start_button_bottom_right",
+                    "description": "Move the Start/Stop pill button from under the device dropdowns to the bottom-right of the window, near the status bar area. Below the processing section.",
+                    "status": "done",
+                    "stack": "fullstack",
+                    "acceptance": [
+                        "Start/Stop button in bottom-right of window",
+                        "Not overlapping with status indicator",
+                        "Clean spacing from processing section",
+                        "Build succeeds"
+                    ]
+                },
+                {
+                    "id": "22c",
+                    "created_at": "2026-06-05T02:11:23.9685102Z",
+                    "title": "Status animado junto al titulo con animacion de pulso",
+                    "name": "animated_status_animation",
+                    "description": "Move the status dot + 'Running'/'Idle' text to the right of the 'Rafear' title in the title bar. Add a subtle pulse animation on the dot when audio is active (running). Use JUCE Timer to animate opacity or scale of the dot.",
+                    "status": "done",
+                    "stack": "fullstack",
+                    "acceptance": [
+                        "Status dot + label positioned right of title 'Rafear'",
+                        "Pulse animation on dot when running (opacity oscillation via Timer)",
+                        "No animation when idle/stopped",
+                        "Build succeeds"
+                    ]
+                },
+                {
+                    "id": "22d",
+                    "created_at": "2026-06-05T02:22:42.6450300Z",
+                    "title": "Correcciones feedback UI: dropdown, alineacion, animacion, espaciado",
+                    "name": "ui_feedback_fixes",
+                    "description": "Fix 5 issues: (1) simpler dropdown arrow, (2) remove superimposed text in ComboBox, (3) vertical center status dot+label, (4) increase timer rate for visible animation, (5) fix ear/bottom separator overlap.",
+                    "status": "done",
+                    "stack": "fullstack",
+                    "acceptance": [
+                        "Dropdown arrow: simple triangle, no path complexity",
+                        "No superimposed text in ComboBox (drawComboBox doesnt draw text, only bg+border+arrow)",
+                        "Status dot + label vertically centered relative to title",
+                        "Animation visible (timer rate >= 20Hz for smooth pulse)",
+                        "Ear dropdown not overlapping with bottom separator",
+                        "Build succeeds"
+                    ],
+                    "transitions": [
+                        {
+                            "from": "pending",
+                            "to": "in_progress",
+                            "at": "2026-06-05T02:24:30.203496+00:00"
+                        }
+                    ]
+                },
+                {
+                    "id": "22e",
+                    "created_at": "2026-06-05T02:30:09.4032882Z",
+                    "title": "Corregir fondo blanco del popup dropdown + lineas blancas en bordes",
+                    "name": "fix_dropdown_popup_background",
+                    "description": "Override drawPopupMenuBackground in RafearLookAndFeel to fill dark (#252525). Remove white background and white border lines showing at top/bottom of dropdown popup.",
+                    "status": "done",
+                    "stack": "fullstack",
+                    "acceptance": [
+                        "Popup menu background dark (#252525), not white",
+                        "No white lines at top/bottom edges of dropdown popup",
+                        "Dropdown items visible and selectable",
+                        "Build succeeds"
+                    ],
+                    "transitions": [
+                        {
+                            "from": "pending",
+                            "to": "in_progress",
+                            "at": "2026-06-08T22:52:07.689073Z"
+                        },
+                        {
+                            "from": "in_progress",
+                            "to": "testing",
+                            "at": "2026-06-08T22:59:29.704468Z"
+                        },
+                        {
+                            "from": "testing",
+                            "to": "done",
+                            "at": "2026-06-08T23:54:48.893254Z"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": 23,
+            "name": "fix_audio_loop",
+            "title": "Eliminar bucle infinito de audio ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â salida en dispositivo diferente al capturado",
+            "description": "Actualmente WASAPI loopback captura el default render y reproduce en el mismo dispositivo = feedback infinito. Solucion: el output device debe ser DIFERENTE al dispositivo capturado. El usuario selecciona el output (headset) en la UI. Se verifica que input != output antes de arrancar.",
+            "stack": "fullstack",
+            "acceptance": [
+                "Selector de output device en UI cambia realmente el dispositivo de salida",
+                "Selector de input muestra 'System Loopback (WASAPI)' como unica opcion",
+                "Verificacion: si input == output, mostrar warning y no arrancar",
+                "Al presionar Start, Rafear captura del default render y reproduce en el output seleccionado",
+                "Sin bucle infinito cuando input != output"
+            ],
+            "status": "done",
+            "created_at": "2026-06-05T01:49:18.0551562Z",
+            "transitions": [
+                {
+                    "from": "pending",
+                    "to": "in_progress",
+                    "at": "2026-06-08T23:59:00Z"
+                },
+                {
+                    "from": "pending",
+                    "to": "in_progress",
+                    "at": "2026-06-09T00:07:53.679687Z"
+                },
+                {
+                    "from": "in_progress",
+                    "to": "testing",
+                    "at": "2026-06-09T00:10:34.872124Z"
+                },
+                {
+                    "from": "testing",
+                    "to": "done",
+                    "at": "2026-06-09T00:22:22.3129627Z"
+                }
+            ]
+        },
+        {
+            "acceptance": [
+                "Slider values set antes de Start se aplican correctamente al arrancar",
+                "Ear selector set antes de Start se aplica correctamente",
+                "Cambiar sliders mientras audio corre se refleja inmediatamente (atomic store/load)",
+                "Cambiar ear mientras audio corre se refleja inmediatamente",
+                "No regresiones en build, mute, device selection"
+            ],
+            "transitions": [
+                {
+                    "from": "pending",
+                    "to": "in_progress",
+                    "at": "2026-06-09T00:33:45.4238783Z"
+                },
+                {
+                    "from": "in_progress",
+                    "to": "testing",
+                    "at": "2026-06-09T00:38:34.7969228Z"
+                },
+                {
+                    "from": "testing",
+                    "to": "done",
+                    "at": "2026-06-09T01:25:06.3189728Z"
+                }
+            ],
+            "id": 24,
+            "description": "AudioPipeline::audioDeviceAboutToStart() llama spatialProcessor->prepare() con valores hardcodeados, sobreescribiendo los params que el usuario haya cambiado antes de Start. Fix: onParamSliderChange() debe llamarse DESPUÃ‰S de que el audio arranque, no antes.",
+            "created_at": "2026-06-09T00:33:11.3923095Z",
+            "name": "fix_realtime_params",
+            "stack": "fullstack",
+            "status": "done",
+            "title": "Arreglar params en tiempo real â€” slider + ear no se aplican al start ni durante ejecuciÃ³n"
+        },
+        {
+            "id": 25,
+            "name": "fix_spatial_filters_cpp",
+            "title": "Corregir filtros espaciales C++ para que produzcan cambios perceptibles",
+            "description": "SpatialAudioProcessor.cpp tiene 6 diferencias con Python reference. Q de bandpass filters 4-10x menor (presence Q=0.5 en vez de 2.0, elevation up Q=0.3 en vez de 3.0, elevation down Q=0.4 en vez de 1.67). Front/back notch aplicado in-place en vez de blend sobre copia. Low-cut 1 biquad en vez de 2 (4o orden). Head shadow no usa Butterworth. Fix: ajustar Q values, notch blend logic, low-cut orden, y head shadow topology.",
+            "stack": "fullstack",
+            "acceptance": [
+                "Presence (clarity) bandpass Q=2.0 (3-5kHz) como Python",
+                "Elevation up bandpass Q=3.0 (7.5-10.5kHz) como Python",
+                "Elevation down bandpass Q=1.67 (3.5-6.5kHz) como Python",
+                "Front/back notch aplicado sobre copia + blend con 0.3*fbInt (no in-place)",
+                "Low-cut 4o orden (2 biquads cascaded) como Python butter(4, 80)",
+                "Build Release exitoso con VS 2022",
+                "Filtros producen cambios perceptibles equivalentes al pipeline Python original"
+            ],
+            "status": "done",
+            "created_at": "2026-06-09T01:32:57Z",
+            "transitions": [
+                {
+                    "from": "pending",
+                    "to": "in_progress",
+                    "at": "2026-06-09T01:32:57Z"
+                },
+                {
+                    "from": "in_progress",
+                    "to": "testing",
+                    "at": "2026-06-09T01:40:59Z"
+                },
+                {
+                    "from": "testing",
+                    "to": "done",
+                    "at": "2026-06-09T02:08:14Z"
+                }
+            ]
+        }
+    ]
 }

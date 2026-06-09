@@ -105,3 +105,30 @@
 - Cost: .00
 - Duration: 20min
 - Agents: leader, implementer, reviewer
+
+## Feature 25 — fix_spatial_filters_cpp
+**Status:** done | **Model:** big-pickle | **Cost:** \.00 | **Duration:** 10min
+**Description:** Fix 6 mismatches in C++ SpatialAudioProcessor vs Python reference (realtime_processor.py) causing imperceptible spatial filters.
+
+### Changes
+1. Presence bandpass Q=2.0 (3-5kHz) — was Q=0.5
+2. Elevation up bandpass Q=3.0 (7.5-10.5kHz) — was Q=0.3
+3. Elevation down bandpass Q=1.67 (3.5-6.5kHz) — was Q=0.4
+4. Front/back notch: blend over copy (mono += notch_filtered * 0.3 * fbInt) instead of in-place 100% depth
+5. Low-cut: 2 cascaded biquads (4th order) matching Python butter(4, 80)
+6. Head shadow explicit Butterworth Q=0.7071
+
+### Files modified
+- rafear/Source/DSP/SpatialAudioProcessor.h (+1 line: lowCutFilter2)
+- rafear/Source/DSP/SpatialAudioProcessor.cpp (+10/-13 lines: 6 fixes)
+
+### Build
+- Release VS 2022 — 0 errors, 0 warnings
+- Merge develop — successful, clean build
+
+### Cost
+- Model: big-pickle
+- Tokens: 50K in / 50K out
+- Cost: \.00
+- Duration: 10min
+- Agents: leader, implementer, reviewer

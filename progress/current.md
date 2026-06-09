@@ -1,4 +1,4 @@
-# Sesión actual
+# Session actual
 
 - **Feature:**
 - **Estado:**

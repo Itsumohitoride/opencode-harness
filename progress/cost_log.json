@@ -134,6 +134,21 @@
         "implementer",
         "reviewer"
       ]
+    },
+    {
+      "date": "2026-06-09T02:08:59.938751+00:00",
+      "feature_id": 25,
+      "feature_name": "fix_spatial_filters_cpp",
+      "model": "big-pickle",
+      "tokens_in": 100000,
+      "tokens_out": 100000,
+      "cost_usd": 0.0,
+      "duration": "10min",
+      "agents": [
+        "leader",
+        "implementer",
+        "reviewer"
+      ]
     }
   ]
 }
