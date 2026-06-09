@@ -70,3 +70,21 @@
 - Tokens: 70K in / 30K out
 - Cost: - Duration: 10min
 - Agents: leader, implementer, reviewer
+
+## Feature 23 — fix_audio_loop
+**Estado:** done | **Modelo:** big-pickle | **Costo:** .00 | **Duración:** 10min
+**Descripción:** Eliminar bucle infinito mutando endpoint default render con IAudioEndpointVolume. WASAPI loopback captura pre-volume, usuario escucha SOLO procesado por audífonos.
+
+### Cambios
+1. Application.cpp — helper muteDefaultRenderEndpoint(bool), llamado en startAudio/stopAudio
+2. WasapiCapture.h/cpp — getDefaultRenderDeviceName() static para comparación output vs default render
+3. MainComponent.h/cpp — device list, onStart validation, output selector
+4. Build: succeeded
+5. Review: APPROVED
+
+### Cost
+- Model: big-pickle
+- Tokens: 50K in / 50K out
+- Cost: .00
+- Duration: 10min
+- Agents: leader, implementer, reviewer

@@ -104,6 +104,21 @@
         "implementer",
         "reviewer"
       ]
+    },
+    {
+      "date": "2026-06-09T00:23:01.568878+00:00",
+      "feature_id": 23,
+      "feature_name": "fix_audio_loop",
+      "model": "big-pickle",
+      "tokens_in": 50000,
+      "tokens_out": 50000,
+      "cost_usd": 0.0,
+      "duration": "10m",
+      "agents": [
+        "leader",
+        "implementer",
+        "reviewer"
+      ]
     }
   ]
 }
