@@ -119,6 +119,21 @@
         "implementer",
         "reviewer"
       ]
+    },
+    {
+      "date": "2026-06-09T01:25:07.044131+00:00",
+      "feature_id": 24,
+      "feature_name": "fix_realtime_params",
+      "model": "big-pickle",
+      "tokens_in": 65000,
+      "tokens_out": 65000,
+      "cost_usd": 0.0,
+      "duration": "20m",
+      "agents": [
+        "leader",
+        "implementer",
+        "reviewer"
+      ]
     }
   ]
 }

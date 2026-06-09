@@ -88,3 +88,20 @@
 - Cost: .00
 - Duration: 10min
 - Agents: leader, implementer, reviewer
+
+## Feature 24 — fix_realtime_params
+**Estado:** done | **Modelo:** big-pickle | **Costo:** .00 | **Duración:** 20min
+**Descripción:** Arreglar params en tiempo real — slider + ear no se aplicaban al start ni durante ejecución.
+
+### Cambios
+1. MainComponent::onStartStopClick() — mover onParamSliderChange() DESPUÉS de onStart()
+2. AudioPipeline::audioDeviceIOCallbackWithContext() — copiar mono procesado a TODOS los canales de output (no solo canal 0)
+3. Build: succeeded
+4. Review: APPROVED
+
+### Cost
+- Model: big-pickle
+- Tokens: 65K in / 65K out
+- Cost: .00
+- Duration: 20min
+- Agents: leader, implementer, reviewer
